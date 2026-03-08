@@ -1,0 +1,177 @@
+import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
+
+import SectionHeader from "../components/nontronics/SectionHeader";
+import ServiceDetailCard from "../components/nontronics/ServiceDetailCard";
+import GlassCard from "../components/nontronics/GlassCard";
+import Marquee from "../components/nontronics/Marquee";
+
+const MOD_SERVICES = [
+  {
+    title: "CONTROLLER MODIFICATIONS",
+    description: "Take your gameplay to the next level with custom controller mods. From rapid-fire triggers to custom button remapping — we build controllers that match your playstyle.",
+    image: "https://images.unsplash.com/photo-1592840496694-26d035b52b48?w=800&q=80",
+    features: [
+      "Rapid-fire & burst-fire triggers",
+      "Custom button remapping",
+      "Adjustable trigger stops",
+      "Enhanced thumbstick grips",
+      "Back paddle/button additions",
+    ],
+  },
+  {
+    title: "CONSOLE MODIFICATIONS",
+    description: "Unlock your console's full potential. Custom firmware, thermal improvements, storage upgrades, and performance tweaks for all major platforms.",
+    image: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=800&q=80",
+    features: [
+      "SSD/storage upgrades",
+      "Thermal paste & pad replacement",
+      "Fan upgrades for quieter operation",
+      "HDMI port replacement",
+      "Disc drive repair & replacement",
+    ],
+  },
+  {
+    title: "CUSTOM SHELLS & AESTHETICS",
+    description: "Make your hardware uniquely yours. Custom painted shells, transparent housings, LED integrations, and vinyl wraps that turn heads.",
+    image: "https://images.unsplash.com/photo-1625842268584-8f3296236761?w=800&q=80",
+    features: [
+      "Custom painted controller shells",
+      "Transparent/clear housing swaps",
+      "Chrome & metallic finishes",
+      "Custom vinyl wraps",
+      "Laser-engraved designs",
+    ],
+  },
+  {
+    title: "LED MODIFICATIONS",
+    description: "Illuminate your setup with custom LED integrations. Programmable RGB lighting for controllers, consoles, and peripherals.",
+    image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
+    features: [
+      "RGB LED button lighting",
+      "Under-glow LED strips",
+      "Custom color configurations",
+      "Reactive lighting effects",
+      "Console LED accent lighting",
+    ],
+  },
+];
+
+export default function Modifications() {
+  return (
+    <div>
+      {/* Hero */}
+      <section className="relative pt-28 pb-14 md:pt-36 md:pb-20 px-5 md:px-12 overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=1920&q=80"
+            alt=""
+            className="w-full h-full object-cover"
+            style={{ opacity: 0.35 }}
+          />
+          <div className="absolute inset-0" style={{ background: "var(--bg-overlay)" }} />
+        </div>
+        <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-primary/10 rounded-full blur-[120px]" />
+
+        <div className="relative max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="flex items-center gap-4 mb-6"
+          >
+            <div className="w-8 h-px bg-primary" />
+            <span className="font-mono text-xs tracking-[0.3em] uppercase text-primary">Service / Modifications</span>
+          </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="font-display text-5xl sm:text-7xl md:text-8xl tracking-tight text-foreground"
+          >
+            CUSTOM <span className="text-primary">MODS</span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="mt-6 text-muted-foreground text-sm md:text-base font-light leading-relaxed max-w-lg"
+          >
+            Elevate your gaming hardware with custom modifications, unique aesthetics, and performance upgrades.
+          </motion.p>
+        </div>
+      </section>
+
+      <Marquee />
+
+      {/* Services */}
+      <section className="px-6 md:px-12 py-24 md:py-32 max-w-7xl mx-auto">
+        <SectionHeader
+          number="01"
+          title="MODIFICATION SERVICES"
+          subtitle="Every mod is crafted with attention to detail and built to last."
+        />
+        <div className="space-y-6 md:space-y-8">
+          {MOD_SERVICES.map((service, i) => (
+            <ServiceDetailCard key={service.title} {...service} index={i} />
+          ))}
+        </div>
+      </section>
+
+      {/* Gallery-style showcase */}
+      <section className="relative px-6 md:px-12 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0 bg-secondary/40" />
+        <div className="relative max-w-7xl mx-auto">
+          <SectionHeader number="02" title="THE CRAFT" subtitle="A look at what goes into every modification." />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { img: "https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=600&q=80", label: "PRECISION SOLDERING" },
+              { img: "https://images.unsplash.com/photo-1625842268584-8f3296236761?w=600&q=80", label: "CUSTOM AESTHETICS" },
+              { img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&q=80", label: "LED INTEGRATION" },
+            ].map((item, i) => (
+              <motion.div
+                key={item.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="relative h-64 md:h-80 rounded-lg overflow-hidden group"
+              >
+                <img src={item.img} alt={item.label} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                <div className="absolute bottom-0 left-0 p-6">
+                  <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-primary">{item.label}</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="px-6 md:px-12 py-24 max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="glass-panel-strong rounded-2xl p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8"
+        >
+          <div>
+            <h2 className="font-display text-3xl md:text-4xl tracking-wide text-foreground mb-2">
+              READY TO <span className="text-primary">MOD</span>?
+            </h2>
+            <p className="text-muted-foreground text-sm font-light">Tell us what you're looking for — we'll make it happen.</p>
+          </div>
+          <Link
+            to={createPageUrl("Contact")}
+            className="inline-flex items-center gap-3 bg-primary text-primary-foreground font-mono text-xs tracking-[0.15em] uppercase px-8 py-4 rounded-lg hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 transition-all duration-200 shrink-0"
+          >
+            Get a Quote <ArrowRight className="w-4 h-4" />
+          </Link>
+        </motion.div>
+      </section>
+    </div>
+  );
+}

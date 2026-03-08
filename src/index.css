@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400&family=DM+Sans:wght@200;300;400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── LIGHT MODE ─── */
+:root {
+  --background: 240 10% 96%;
+  --foreground: 240 12% 8%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 12% 8%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 12% 8%;
+  --primary: 270 60% 62%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 8% 90%;
+  --secondary-foreground: 240 10% 25%;
+  --muted: 240 6% 85%;
+  --muted-foreground: 240 6% 44%;
+  --accent: 270 60% 62%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 6% 82%;
+  --input: 240 6% 82%;
+  --ring: 270 60% 62%;
+  --radius: 0.75rem;
+
+  --bg-overlay: rgba(238, 238, 244, 0.82);
+  --glass-bg: rgba(255, 255, 255, 0.52);
+  --glass-strong-bg: rgba(255, 255, 255, 0.70);
+  --glass-border: rgba(255, 255, 255, 0.80);
+  --glass-strong-border: rgba(255, 255, 255, 0.92);
+  --logo-filter: brightness(0) saturate(100%);
+}
+
+/* ─── DARK MODE ─── */
+.dark {
+  --background: 240 12% 7%;
+  --foreground: 240 10% 92%;
+  --card: 240 10% 11%;
+  --card-foreground: 240 10% 92%;
+  --popover: 240 10% 11%;
+  --popover-foreground: 240 10% 92%;
+  --primary: 270 65% 68%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 8% 14%;
+  --secondary-foreground: 240 8% 75%;
+  --muted: 240 6% 18%;
+  --muted-foreground: 240 5% 55%;
+  --accent: 270 65% 68%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 6% 20%;
+  --input: 240 6% 20%;
+  --ring: 270 65% 68%;
+
+  --bg-overlay: rgba(10, 10, 18, 0.78);
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-strong-bg: rgba(255, 255, 255, 0.07);
+  --glass-border: rgba(255, 255, 255, 0.07);
+  --glass-strong-border: rgba(255, 255, 255, 0.12);
+  --logo-filter: brightness(0) invert(1);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted)) transparent;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  color: hsl(var(--foreground));
+  /* Prominent electronics background */
+  background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&q=80');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  background-color: hsl(var(--background));
+}
+
+/* Frosted overlay — mode-aware */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ─── GLASS PANELS ─── */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+}
+
+.glass-panel-strong {
+  background: var(--glass-strong-bg);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid var(--glass-strong-border);
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.10);
+}
+
+/* ─── ACCENT GLOW (purple) ─── */
+.accent-glow {
+  box-shadow: 0 0 50px rgba(150, 100, 220, 0.12), 0 0 100px rgba(150, 100, 220, 0.06);
+}
+
+/* ─── MARQUEE ─── */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ─── GRID OVERLAY ─── */
+.grid-overlay {
+  background-image:
+    linear-gradient(rgba(128,128,128,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(128,128,128,0.06) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+/* ─── LOGO FILTER ─── */
+.logo-img {
+  filter: var(--logo-filter);
+}
+
+@layer base {
+  * { @apply border-border; }
+}
