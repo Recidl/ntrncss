@@ -15,6 +15,7 @@ const NAV_ITEMS = [
 ];
 
 export default function Navbar() {
+  const logoSrc = `${import.meta.env.BASE_URL}assets/nontronicslog.png`;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(
     typeof navigator !== "undefined" ? navigator.onLine : true
@@ -61,7 +62,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link to={createPageUrl("Home")} className="z-10 flex items-center">
             <img
-              src="/assets/nontronicslog.png"
+              src={logoSrc}
               alt="Nontronics"
               className="h-8 w-auto logo-img"
             />

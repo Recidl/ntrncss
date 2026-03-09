@@ -9,6 +9,7 @@ const YT_VIDEO_ID = "jenQ3jQFhww";
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&q=85";
 
 export default function HeroSection() {
+  const logoSrc = `${import.meta.env.BASE_URL}assets/nontronicsbwplog.png`;
   const { dark } = useTheme();
   const [useVideoFallback, setUseVideoFallback] = useState(false);
   const fallbackTimeoutRef = useRef(null);
@@ -151,7 +152,7 @@ export default function HeroSection() {
           className="mb-4"
         >
           <img
-            src="/assets/nontronicsbwplog.png"
+            src={logoSrc}
             alt="Nontronics"
             className="h-14 md:h-20 w-auto logo-img"
           />

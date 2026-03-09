@@ -9,6 +9,8 @@ const SOCIAL_LINKS = [
 ];
 
 export default function Footer() {
+  const logoSrc = `${import.meta.env.BASE_URL}assets/nontronicslog.png`;
+
   return (
     <footer className="glass-panel-strong border-t border-border mt-0">
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-20">
@@ -16,7 +18,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-2">
             <img
-              src="/assets/nontronicslog.png"
+              src={logoSrc}
               alt="Nontronics"
               className="h-8 w-auto mb-5 logo-img"
             />
