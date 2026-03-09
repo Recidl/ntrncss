@@ -1,9 +1,9 @@
 // Service Worker for Nontronics PWA
-const CACHE_NAME = 'nontronics-v1';
+const CACHE_NAME = 'nontronics-v2';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json'
+  './',
+  './index.html',
+  './manifest.json'
 ];
 
 // Install event - cache resources
@@ -58,7 +58,7 @@ self.addEventListener('fetch', event => {
         .catch(() => {
           return caches.match(event.request)
             .then(cachedResponse => {
-              return cachedResponse || caches.match('/');
+              return cachedResponse || caches.match('./index.html');
             });
         })
     );
