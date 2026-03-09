@@ -25,7 +25,6 @@
   --border: 240 6% 82%;
   --input: 240 6% 82%;
   --ring: 270 60% 62%;
-  --radius: 0.75rem;
 
   --bg-overlay: rgba(238, 238, 244, 0.82);
   --glass-bg: rgba(255, 255, 255, 0.52);
@@ -70,6 +69,11 @@
   scrollbar-color: hsl(var(--muted)) transparent;
 }
 
+html {
+  scroll-behavior: smooth;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
 html, body {
   height: 100%;
 }
@@ -77,25 +81,20 @@ html, body {
 body {
   font-family: 'DM Sans', sans-serif;
   color: hsl(var(--foreground));
-  /* Prominent electronics background */
-  background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&q=80');
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center;
   background-color: hsl(var(--background));
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
-/* Frosted overlay — mode-aware */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: var(--bg-overlay);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  z-index: -1;
-  pointer-events: none;
+/* Smooth transitions for theme-aware properties - exclude images, SVGs, and iframes */
+*:not(img):not(svg):not(iframe):not(canvas):not(video) {
+  transition: background-color 0.5s ease, 
+              color 0.5s ease, 
+              border-color 0.5s ease,
+              box-shadow 0.5s ease,
+              opacity 0.5s ease;
 }
+
+/* Removed persistent background overlay */
 
 /* ─── GLASS PANELS ─── */
 .glass-panel {
@@ -104,6 +103,7 @@ body::before {
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+  transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
 }
 
 .glass-panel-strong {
@@ -112,6 +112,7 @@ body::before {
   -webkit-backdrop-filter: blur(40px);
   border: 1px solid var(--glass-strong-border);
   box-shadow: 0 4px 32px rgba(0, 0, 0, 0.10);
+  transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
 }
 
 /* ─── ACCENT GLOW (purple) ─── */
@@ -125,6 +126,49 @@ body::before {
   100% { transform: translateX(-50%); }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none !important;
+  }
+}
+
+@keyframes feature-ticker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.feature-ticker-mask {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
+.feature-ticker-track {
+  display: inline-flex;
+  min-width: max-content;
+  gap: 0;
+  will-change: transform;
+}
+
+.feature-ticker-item {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.feature-ticker-track.is-overflowing {
+  animation: feature-ticker 12s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature-ticker-track.is-overflowing {
+    animation: none !important;
+  }
+}
+
 /* ─── GRID OVERLAY ─── */
 .grid-overlay {
   background-image:
@@ -133,9 +177,90 @@ body::before {
   background-size: 80px 80px;
 }
 
+/* ─── 404 BLACKHOLE DOTS ─── */
+@keyframes blackhole-pull {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.5;
+  }
+  82% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(calc((50 - var(--dot-x)) * 1vw), calc((50 - var(--dot-y)) * 1vh)) rotate(1080deg);
+    opacity: 0;
+  }
+}
+.dark .dot-blackhole {
+  --dot-color: rgba(139, 92, 246, 0.35);
+}
+.dot-blackhole {
+  --dot-color: rgba(139, 92, 246, 0.28);
+  width: 4px;
+  height: 4px;
+  border-radius: 0;
+  background: var(--dot-color);
+  position: absolute;
+  left: calc(var(--dot-x) * 1%);
+  top: calc(var(--dot-y) * 1%);
+  animation: blackhole-pull var(--dot-duration) ease-in-out infinite;
+  animation-delay: var(--dot-delay);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dot-blackhole {
+    animation: none;
+    opacity: 0.4;
+  }
+}
+
 /* ─── LOGO FILTER ─── */
 .logo-img {
   filter: var(--logo-filter);
+}
+
+/* ─── FOOTER SOCIAL ICONS (gradient/matte hover) ─── */
+.footer-social-instagram:hover {
+  color: #c13584;
+}
+.footer-social-youtube:hover {
+  color: #c41e1e;
+}
+.footer-social-facebook:hover {
+  color: #166fe5;
+}
+
+/* ─── HERO YOUTUBE BACKGROUND (cover fill) ─── */
+.hero-yt-background {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 56.25vw;
+  min-height: 100vh;
+  min-width: 177.78vh;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.hero-yt-background iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 56.25vw;
+  min-height: 100vh;
+  min-width: 177.78vh;
+  transform: translate(-50%, -50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-yt-background {
+    display: none !important;
+  }
 }
 
 @layer base {

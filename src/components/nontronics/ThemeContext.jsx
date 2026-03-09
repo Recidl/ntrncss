@@ -5,7 +5,14 @@ const ThemeContext = createContext();
 export function ThemeProvider({ children }) {
   const [dark, setDark] = useState(() => {
     const saved = localStorage.getItem("nontronics-theme");
-    return saved ? saved === "dark" : true; // default: dark
+    if (saved) {
+      return saved === "dark";
+    }
+    // Auto-detect system preference
+    if (typeof window !== "undefined" && window.matchMedia) {
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    return true; // default to dark
   });
 
   useEffect(() => {
@@ -17,10 +24,23 @@ export function ThemeProvider({ children }) {
     }
   }, [dark]);
 
-  // Apply on mount
+  // Apply on mount - ensure theme is set immediately
   useEffect(() => {
-    if (dark) document.documentElement.classList.add("dark");
-    else document.documentElement.classList.remove("dark");
+    const saved = localStorage.getItem("nontronics-theme");
+    let isDark;
+    if (saved) {
+      isDark = saved === "dark";
+    } else if (typeof window !== "undefined" && window.matchMedia) {
+      isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    } else {
+      isDark = true;
+    }
+    
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
   }, []);
 
   return (

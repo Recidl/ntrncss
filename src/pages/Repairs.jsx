@@ -10,21 +10,33 @@ import Marquee from "../components/nontronics/Marquee";
 
 const REPAIR_SERVICES = [
   {
+    title: "GENERAL DAMAGE",
+    description: "Comprehensive repair for everyday damage not covered by a specific category. We diagnose and replace broken parts, restore functionality, and reinforce weak points before they fail again.",
+    image: "https://img.global.news.samsung.com/global/wp-content/uploads/2023/12/Self-Repair-Program-Expansion_main1.jpg",
+    features: [
+      "Broken button & housing repair",
+      "Internal part replacement",
+      "Connector & bracket fixes",
+      "Frame & body damage restoration",
+      "General fault diagnosis & repair",
+    ],
+  },
+  {
     title: "SCREEN REPLACEMENT",
     description: "Cracked, shattered, or unresponsive screens replaced with precision. We use high-quality OEM and aftermarket displays for phones, tablets, and laptops.",
-    image: "https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1583413230540-ddf9068c9d2d?q=80&w=687",
     features: [
       "iPhone & Android screen repairs",
       "iPad & tablet glass replacement",
       "Laptop display panel replacement",
-      "OLED and LCD panel options",
-      "Same-day service available",
+      "OLED & LCD panel options",
+      "Rapid service available",
     ],
   },
   {
     title: "BATTERY SERVICE",
     description: "Restore your device's battery life to like-new condition. We diagnose battery health and replace worn cells with premium components.",
-    image: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1512439408685-2e399291a4e6?q=80&w=1095",
     features: [
       "Battery health diagnostics",
       "Phone & tablet battery replacement",
@@ -34,33 +46,33 @@ const REPAIR_SERVICES = [
     ],
   },
   {
-    title: "CHARGING PORT REPAIR",
-    description: "Loose or broken charging ports fixed or replaced. No more wiggling cables or intermittent charging.",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80",
+    title: "CONTROLLER REPAIR",
+    description: "Fix worn or faulty controllers with precision component-level repair. We resolve stick drift, unresponsive buttons, charging faults, and connection issues across major platforms.",
+    image: "https://images.unsplash.com/photo-1585857188849-f44983e4a509?q=80&w=1170",
     features: [
-      "USB-C & Lightning port repair",
-      "Micro-USB port replacement",
-      "Laptop DC jack repair",
-      "Wireless charging coil replacement",
-      "Port cleaning & maintenance",
+      "Stick drift diagnosis & repair",
+      "Thumbstick module replacement",
+      "Button & trigger restoration",
+      "Charging & battery connector fixes",
+      "Bluetooth & pairing issue repair",
     ],
   },
   {
-    title: "WATER DAMAGE RECOVERY",
-    description: "Dropped your device in water? Time is critical. Our ultrasonic cleaning and micro-soldering techniques give your device the best chance of recovery.",
-    image: "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&q=80",
+    title: "FIRMWARE RECOVERY & REPAIR",
+    description: "OS and firmware issues fixed end-to-end. We recover failed updates, remove malware, resolve persistent bugs, and restore stability for any device with an operating system.",
+    image: "https://www.zdnet.com/a/img/resize/681bcdc58703a8091ba94dc0574543ad7c1e255f/2025/06/27/789ea75a-8444-49c6-a946-bbf99432df67/gettyimages-2162022885.jpg?auto=webp&width=1280",
     features: [
-      "Ultrasonic board cleaning",
-      "Corrosion removal & treatment",
-      "Component-level diagnosis",
-      "Data recovery attempts",
-      "Preventative coating application",
+      "Firmware & OS recovery",
+      "Boot loop & startup failure repair",
+      "Virus & malware cleanup",
+      "System bug & slowdown fixes",
+      "Apple restore & update recovery",
     ],
   },
   {
     title: "DIAGNOSTICS & TROUBLESHOOTING",
     description: "Not sure what's wrong? Our comprehensive diagnostic service identifies the exact issue so you know your options before committing to a repair.",
-    image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&q=80",
+    image: "https://static0.howtogeekimages.com/wordpress/wp-content/uploads/2016/05/IMG_8461-1-650x300.jpg?w=1200&h=628&fit=crop",
     features: [
       "Full hardware diagnostics",
       "Software troubleshooting",
@@ -79,13 +91,13 @@ export default function Repairs() {
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=1920&q=80"
-            alt=""
-            className="w-full h-full object-cover"
-            style={{ opacity: 0.35 }}
+            alt="Electronics repair workspace"
+            className="w-full h-full object-cover opacity-50 dark:opacity-[0.35]"
+            loading="eager"
           />
           <div className="absolute inset-0" style={{ background: "var(--bg-overlay)" }} />
         </div>
-        <div className="absolute top-1/2 left-1/3 w-72 h-72 bg-primary/10 rounded-full blur-[120px]" />
+        <div className="absolute top-1/2 left-1/3 w-72 h-72 bg-primary/10 blur-[120px]" />
         
         <div className="relative max-w-7xl mx-auto">
           <motion.div
@@ -142,7 +154,7 @@ export default function Repairs() {
               { step: "01", title: "INTAKE", desc: "Drop off your device or describe the issue. We'll give you an initial assessment." },
               { step: "02", title: "DIAGNOSE", desc: "Full diagnostic to identify all issues and provide an accurate quote." },
               { step: "03", title: "REPAIR", desc: "Expert technicians perform the repair with quality parts and precision tools." },
-              { step: "04", title: "DELIVER", desc: "Quality tested and returned to you, often same-day or next-day." },
+              { step: "04", title: "DELIVER", desc: "Quality tested and returned to you, often within the same week." },
             ].map((item, i) => (
               <GlassCard key={item.step}>
                 <span className="font-mono text-xs text-primary tracking-wider">{item.step}</span>
@@ -160,20 +172,28 @@ export default function Repairs() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="glass-panel-strong rounded-2xl p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8"
+          className="glass-panel-strong p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8"
         >
           <div>
             <h2 className="font-display text-3xl md:text-4xl tracking-wide text-foreground mb-2">
               NEED A <span className="text-primary">REPAIR</span>?
             </h2>
-            <p className="text-muted-foreground text-sm font-light">Get a free quote today — most repairs completed same-day.</p>
+            <p className="text-muted-foreground text-sm font-light">Get a free quote today — most repairs completed the same week.</p>
           </div>
-          <Link
-            to={createPageUrl("Contact")}
-            className="inline-flex items-center gap-3 bg-primary text-primary-foreground font-mono text-xs tracking-[0.15em] uppercase px-8 py-4 rounded-lg hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 transition-all duration-200 shrink-0"
-          >
-            Get a Quote <ArrowRight className="w-4 h-4" />
-          </Link>
+          <div className="flex flex-col items-center gap-4">
+            <Link
+              to={createPageUrl("Contact")}
+              className="inline-flex items-center gap-3 bg-primary text-primary-foreground font-mono text-xs tracking-[0.15em] uppercase px-8 py-4 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 transition-all duration-200 shrink-0"
+            >
+              Get a Quote <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              to={createPageUrl("Resources")}
+              className="font-mono text-[11px] tracking-[0.15em] uppercase text-muted-foreground border-b border-muted pb-0.5 hover:text-foreground hover:border-foreground transition-colors"
+            >
+              Shipping & turnaround info
+            </Link>
+          </div>
         </motion.div>
       </section>
     </div>

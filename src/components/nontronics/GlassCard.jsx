@@ -7,7 +7,7 @@ export default function GlassCard({ children, className = "", hover = true, ...p
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5 }}
-      className={`glass-panel rounded-xl p-6 md:p-8 ${hover ? "hover:bg-white/80 transition-all duration-300 hover:shadow-md" : ""} ${className}`}
+      className={`glass-panel p-6 md:p-8 ${hover ? "dark:hover:bg-white/10 hover:bg-white/80 transition-all duration-300 hover:shadow-md" : ""} ${className}`}
       {...props}
     >
       {children}

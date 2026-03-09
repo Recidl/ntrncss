@@ -1,45 +1,77 @@
-const db = globalThis.__B44_DB__ || {
-  auth: { isAuthenticated: async () => false, me: async () => null },
-  entities: new Proxy({}, { get: () => ({ filter: async () => [], get: async () => null, create: async () => ({}), update: async () => ({}), delete: async () => ({}) }) }),
-  integrations: { Core: { UploadFile: async () => ({ file_url: '' }) } }
-};
+# Nontronics Website
 
-**Welcome to your Base44 project** 
+A static website built with React and Vite that can be deployed to any static hosting service.
 
-**About**
+## About
 
-View and Edit  your app on [db.com](http://db.com) 
+This is a static website that has been converted from Base44 to work independently. It can be deployed to any static hosting platform such as:
+- Netlify
+- Vercel
+- GitHub Pages
+- AWS S3 + CloudFront
+- Any web server
 
-This project contains everything you need to run your app locally.
-
-**Edit the code in your local development environment**
-
-Any change pushed to the repo will also be reflected in the Base44 Builder.
+## Development
 
 **Prerequisites:** 
 
-1. Clone the repository using the project's Git URL 
+1. Node.js (v16 or higher)
+2. npm or yarn
+
+**Setup:**
+
+1. Clone the repository
 2. Navigate to the project directory
 3. Install dependencies: `npm install`
-4. Create an `.env.local` file and set the right environment variables
+4. Run the development server: `npm run dev`
 
+The app will be available at `http://localhost:5173`
+
+## Building for Production
+
+To build the static site:
+
+```bash
+npm run build
 ```
-VITE_BASE44_APP_ID=your_app_id
-VITE_BASE44_APP_BASE_URL=your_backend_url
 
-e.g.
-VITE_BASE44_APP_ID=cbef744a8545c389ef439ea6
-VITE_BASE44_APP_BASE_URL=https://my-to-do-list-81bfaad7.db.app
-```
+This will create a `dist` folder containing all the static files ready for deployment.
 
-Run the app: `npm run dev`
+## Deployment
 
-**Publish your changes**
+### Deploy to Netlify
 
-Open [db.com](http://db.com) and click on Publish.
+1. Build the project: `npm run build`
+2. Drag and drop the `dist` folder to Netlify, or
+3. Connect your Git repository and set the build command to `npm run build` and publish directory to `dist`
 
-**Docs & Support**
+### Deploy to Vercel
 
-Documentation: [https://docs.db.com/Integrations/Using-GitHub](https://docs.db.com/Integrations/Using-GitHub)
+1. Install Vercel CLI: `npm i -g vercel`
+2. Run `vercel` in the project directory
+3. Follow the prompts
 
-Support: [https://app.db.com/support](https://app.db.com/support)
+### Deploy to GitHub Pages
+
+1. Build the project: `npm run build`
+2. Push the `dist` folder contents to the `gh-pages` branch, or
+3. Use GitHub Actions to automate the deployment
+
+### Deploy to Any Static Host
+
+Simply upload the contents of the `dist` folder to your web server's public directory.
+
+## Project Structure
+
+- `src/` - Source code
+- `src/pages/` - Page components
+- `src/components/` - Reusable components
+- `dist/` - Built static files (generated after build)
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build locally
+- `npm run lint` - Run ESLint
+- `npm run lint:fix` - Fix ESLint errors automatically

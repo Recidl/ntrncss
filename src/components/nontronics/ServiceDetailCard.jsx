@@ -1,8 +1,57 @@
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
 
 export default function ServiceDetailCard({ title, description, image, features, index = 0 }) {
-  const isEven = index % 2 === 0;
+  const featurePreview = Array.isArray(features) ? features.slice(0, 3).join(" • ") : "";
+  const featureTickerText = featurePreview ? `${featurePreview}   •   ` : "";
+  const featureViewportRef = useRef(null);
+  const featureTextRef = useRef(null);
+  const [isFeatureOverflowing, setIsFeatureOverflowing] = useState(false);
+
+  useEffect(() => {
+    if (!featurePreview) {
+      setIsFeatureOverflowing(false);
+      return;
+    }
+
+    const textElement = featureTextRef.current;
+    const viewportElement = featureViewportRef.current;
+    if (!textElement || !viewportElement) {
+      return;
+    }
+
+    const checkOverflow = () => {
+      const textWidth = textElement.getBoundingClientRect().width;
+      const viewportWidth = viewportElement.getBoundingClientRect().width;
+      setIsFeatureOverflowing(textWidth > viewportWidth + 2);
+    };
+
+    checkOverflow();
+    requestAnimationFrame(checkOverflow);
+    setTimeout(checkOverflow, 250);
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(checkOverflow);
+    }
+
+    const resizeObserver = typeof ResizeObserver !== "undefined"
+      ? new ResizeObserver(checkOverflow)
+      : null;
+
+    if (resizeObserver) {
+      resizeObserver.observe(textElement);
+      resizeObserver.observe(viewportElement);
+    }
+
+    window.addEventListener("resize", checkOverflow);
+
+    return () => {
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+      window.removeEventListener("resize", checkOverflow);
+    };
+  }, [featurePreview]);
 
   return (
     <motion.div
@@ -10,41 +59,44 @@ export default function ServiceDetailCard({ title, description, image, features,
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.6, delay: index * 0.1 }}
-      className={`grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden rounded-2xl border border-border shadow-sm ${
-        isEven ? "" : "lg:[direction:rtl]"
-      }`}
+      className="grid grid-cols-[96px_1fr] md:grid-cols-[132px_1fr] items-stretch overflow-hidden border border-border shadow-sm"
     >
       {/* Image */}
-      <div className="relative h-64 lg:h-auto min-h-[320px] overflow-hidden lg:[direction:ltr]">
+      <div className="relative h-full min-h-[88px] md:min-h-[96px] overflow-hidden">
         <img
           src={image}
           alt={title}
-          className="w-full h-full object-cover"
+          loading="lazy"
+          className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/25 to-transparent" />
       </div>
 
       {/* Content */}
-      <div className="glass-panel p-8 md:p-12 flex flex-col justify-center lg:[direction:ltr]">
-        <h3 className="font-display text-3xl md:text-4xl tracking-wide text-foreground mb-4">
+      <div className="glass-panel min-w-0 px-3 md:px-4 py-2 flex flex-col justify-center">
+        <h3 className="font-display text-lg md:text-xl tracking-wide text-foreground leading-none">
           {title}
         </h3>
-        <p className="text-muted-foreground text-sm font-light leading-relaxed mb-8">
+        <p className="text-muted-foreground text-xs md:text-sm font-light leading-snug mt-1">
           {description}
         </p>
-
-        {features && (
-          <ul className="space-y-3">
-            {features.map((feature) => (
-              <li key={feature} className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center mt-0.5 shrink-0">
-                  <Check className="w-3 h-3 text-primary" />
-                </div>
-                <span className="text-foreground text-sm font-light">{feature}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+        {featurePreview ? (
+          <div
+            ref={featureViewportRef}
+            className={`mt-2 min-w-0 overflow-hidden ${isFeatureOverflowing ? "feature-ticker-mask" : ""}`}
+          >
+            <div
+              className={`feature-ticker-track text-[10px] md:text-xs uppercase tracking-[0.08em] text-primary/90 ${
+                isFeatureOverflowing ? "is-overflowing" : ""
+              }`}
+            >
+              <span ref={featureTextRef} className="feature-ticker-item">{featureTickerText}</span>
+              {isFeatureOverflowing ? (
+                <span className="feature-ticker-item" aria-hidden="true">{featureTickerText}</span>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
       </div>
     </motion.div>
   );

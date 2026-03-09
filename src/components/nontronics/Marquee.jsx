@@ -7,9 +7,9 @@ export default function Marquee() {
 
   return (
     <div className="border-y border-border py-4 overflow-hidden glass-panel">
-      <div className="flex gap-16 animate-[marquee_25s_linear_infinite]" style={{ width: "max-content" }}>
+      <div className="flex gap-16 marquee-track animate-[marquee_25s_linear_infinite]" style={{ width: "max-content" }}>
         {[...items, ...items].map((item, i) => (
-          <span key={i} className="flex items-center gap-16 font-display text-sm tracking-[0.25em] text-muted-foreground whitespace-nowrap">
+          <span key={`${item}-${i}`} className="flex items-center gap-16 font-display text-sm tracking-[0.25em] text-muted-foreground whitespace-nowrap">
             {item}
             <span className="text-primary text-[10px]">✦</span>
           </span>

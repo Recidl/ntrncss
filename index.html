@@ -1,17 +1,12 @@
-const db = globalThis.__B44_DB__ || {
-  auth: { isAuthenticated: async () => false, me: async () => null },
-  entities: new Proxy({}, { get: () => ({ filter: async () => [], get: async () => null, create: async () => ({}), update: async () => ({}), delete: async () => ({}) }) }),
-  integrations: { Core: { UploadFile: async () => ({ file_url: '' }) } }
-};
-
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="https://db.com/logo_v2.svg" />
+    <link rel="icon" type="image/png" href="/assets/nontronicsfavi.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Nontronics - precision electronics repair, custom modifications, and quality PC builds. Screen repair, controller mods, LED installations, and custom gaming PCs based in Aurora, Illinois." />
     <link rel="manifest" href="/manifest.json" />
-    <title>Base44 APP</title>
+    <title>Nontronics | Built With Precision.</title>
   </head>
   <body>
     <div id="root"></div>

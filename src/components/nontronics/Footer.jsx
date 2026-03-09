@@ -1,5 +1,12 @@
 import { Link } from "react-router-dom";
+import { Instagram, Youtube, Facebook } from "lucide-react";
 import { createPageUrl } from "@/utils";
+
+const SOCIAL_LINKS = [
+  { icon: Instagram, href: "https://instagram.com", label: "Instagram", hoverClass: "footer-social-instagram" },
+  { icon: Youtube, href: "https://youtube.com", label: "YouTube", hoverClass: "footer-social-youtube" },
+  { icon: Facebook, href: "https://facebook.com", label: "Facebook", hoverClass: "footer-social-facebook" },
+];
 
 export default function Footer() {
   return (
@@ -9,13 +16,16 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-2">
             <img
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69acca1bfb112d09d1f7b474/914300974_nontronics1.png"
+              src="/assets/nontronicslog.png"
               alt="Nontronics"
               className="h-8 w-auto mb-5 logo-img"
             />
             <p className="text-muted-foreground text-sm font-light leading-relaxed max-w-sm">
-              Precision electronics repair, custom modifications, and bespoke PC builds.
-              Crafting technology solutions since day one.
+              Precise electronics repair, custom modifications, and quality PC builds.
+              Giving an answer since day one.
+            </p>
+            <p className="text-muted-foreground text-xs font-light mt-3">
+              Nontronics LLC, {new Date().getFullYear()}
             </p>
           </div>
 
@@ -27,6 +37,7 @@ export default function Footer() {
                 { label: "Repairs", page: "Repairs" },
                 { label: "Modifications", page: "Modifications" },
                 { label: "Custom Builds", page: "CustomBuilds" },
+                { label: "Resources", page: "Resources" },
               ].map((item) => (
                 <li key={item.page}>
                   <Link
@@ -52,19 +63,41 @@ export default function Footer() {
                   Get in Touch
                 </Link>
               </li>
-              <li className="text-muted-foreground text-sm font-light">nontronics.tech</li>
+              <li className="text-muted-foreground text-sm font-light">
+                <a href="https://nontronics.com" className="hover:text-foreground transition-colors">nontronics.com</a>
+                <span className="mx-1">|</span>
+                <a href="https://nontronics.tech" className="hover:text-foreground transition-colors">nontronics.tech</a>
+              </li>
+              <li className="flex items-center gap-3 pt-2">
+                {SOCIAL_LINKS.map(({ icon: Icon, href, label, hoverClass }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`text-muted-foreground transition-all duration-300 ${hoverClass}`}
+                    aria-label={label}
+                  >
+                    <Icon className="w-5 h-5" strokeWidth={1.5} />
+                  </a>
+                ))}
+              </li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-border mt-14 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground">
-            © {new Date().getFullYear()} Nontronics. All rights reserved.
+            © {new Date().getFullYear()} Nontronics LLC. All rights reserved.
           </span>
           <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground">
             Built with precision
           </span>
         </div>
+
+        <p className="mt-5 text-center text-xs text-muted-foreground/90">
+          Nontronics LLC. is an independent repair, modification, and manufacturing service; We are not affiliated with any listed brands.
+        </p>
       </div>
     </footer>
   );

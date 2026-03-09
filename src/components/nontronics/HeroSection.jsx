@@ -1,23 +1,120 @@
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useTheme } from "./ThemeContext";
 
+const YT_VIDEO_ID = "jenQ3jQFhww";
+const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&q=85";
+
 export default function HeroSection() {
   const { dark } = useTheme();
+  const [useVideoFallback, setUseVideoFallback] = useState(false);
+  const fallbackTimeoutRef = useRef(null);
+  const playerRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setUseVideoFallback(true);
+      return;
+    }
+
+    if (!window.YT) {
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScript = document.getElementsByTagName("script")[0];
+      firstScript.parentNode.insertBefore(tag, firstScript);
+    }
+
+    const initPlayer = () => {
+      if (!window.YT?.Player || !document.getElementById("hero-yt-player")) return;
+
+      playerRef.current = new window.YT.Player("hero-yt-player", {
+        width: 1920,
+        height: 1080,
+        videoId: YT_VIDEO_ID,
+        playerVars: {
+          autoplay: 1,
+          mute: 1,
+          loop: 1,
+          playlist: YT_VIDEO_ID,
+          controls: 0,
+          showinfo: 0,
+          rel: 0,
+          modestbranding: 1,
+          playsinline: 1,
+          disablekb: 1,
+          fs: 0,
+        },
+        events: {
+          onError: () => setUseVideoFallback(true),
+          onStateChange: (e) => {
+            if (e.data === window.YT.PlayerState.ERROR) setUseVideoFallback(true);
+          },
+        },
+      });
+
+      fallbackTimeoutRef.current = setTimeout(() => {
+        try {
+          const state = playerRef.current?.getPlayerState?.();
+          if (state === window.YT?.PlayerState?.UNSTARTED) {
+            setUseVideoFallback(true);
+          }
+        } catch {
+          setUseVideoFallback(true);
+        }
+      }, 8000);
+    };
+
+    const apiTimeout = setTimeout(() => {
+      if (!window.YT?.Player) setUseVideoFallback(true);
+    }, 12000);
+
+    if (window.YT?.Player) {
+      initPlayer();
+    } else {
+      window.onYouTubeIframeAPIReady = () => {
+        initPlayer();
+      };
+    }
+
+    return () => {
+      if (fallbackTimeoutRef.current) clearTimeout(fallbackTimeoutRef.current);
+      clearTimeout(apiTimeout);
+      try {
+        playerRef.current?.destroy?.();
+      } catch {
+        // ignore cleanup errors
+      }
+    };
+  }, []);
 
   return (
     <section className="relative min-h-screen flex flex-col justify-end pb-12 md:pb-24 px-5 md:px-12 overflow-hidden">
-      {/* Background image — more prominent */}
-      <div className="absolute inset-0 pointer-events-none">
+      {/* Background: video with image fallback */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Fallback image — shown when video fails, reduced-motion, or blocked */}
         <img
-          src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&q=85"
+          src={FALLBACK_IMAGE}
           alt=""
-          className="w-full h-full object-cover"
-          style={{ opacity: dark ? 0.45 : 0.30 }}
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full object-cover absolute inset-0 transition-opacity duration-500"
+          style={{ opacity: useVideoFallback ? (dark ? 0.45 : 0.5) : 0 }}
         />
-        {/* Gradient: heavy at bottom for text legibility, light at top to show image */}
+        {/* YouTube video — API replaces #hero-yt-player div with iframe */}
+        {!useVideoFallback && (
+          <div className="hero-yt-background">
+            <div
+              id="hero-yt-player"
+              className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-[100vh] min-w-[177.78vh] -translate-x-1/2 -translate-y-1/2"
+            />
+          </div>
+        )}
+        {/* Gradient overlay — text legibility */}
         <div
           className="absolute inset-0"
           style={{
@@ -30,8 +127,8 @@ export default function HeroSection() {
       </div>
 
       {/* Purple glow blobs */}
-      <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-primary/10 rounded-full blur-[140px]" />
-      <div className="absolute bottom-1/4 left-1/5 w-64 h-64 bg-primary/8 rounded-full blur-[100px]" />
+      <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-primary/10 blur-[140px]" />
+      <div className="absolute bottom-1/4 left-1/5 w-64 h-64 bg-primary/8 blur-[100px]" />
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto w-full">
@@ -54,7 +151,7 @@ export default function HeroSection() {
           className="mb-4"
         >
           <img
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69acca1bfb112d09d1f7b474/914300974_nontronics1.png"
+            src="/assets/nontronicsbwplog.png"
             alt="Nontronics"
             className="h-14 md:h-20 w-auto logo-img"
           />
@@ -77,14 +174,14 @@ export default function HeroSection() {
           className="flex flex-col md:flex-row md:items-end justify-between mt-8 md:mt-14 gap-6"
         >
           <p className="text-muted-foreground text-sm font-light leading-relaxed max-w-xs md:max-w-sm">
-            Precision repairs, custom mods, and bespoke PC builds.
+            Precision repairs, custom mods, and quality PC builds.
             Where technology meets craftsmanship.
           </p>
 
           <div className="flex flex-row md:flex-col items-center md:items-end gap-4">
             <Link
               to={createPageUrl("Contact")}
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-mono text-[11px] tracking-[0.12em] uppercase px-6 py-3 rounded-lg hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/25 transition-all duration-200"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-mono text-[11px] tracking-[0.12em] uppercase px-6 py-3 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/25 transition-all duration-200"
             >
               Get a Quote
               <ArrowRight className="w-3.5 h-3.5" />

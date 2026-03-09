@@ -5,10 +5,21 @@ import { createPageUrl } from "@/utils";
 
 import SectionHeader from "../components/nontronics/SectionHeader";
 import ServiceDetailCard from "../components/nontronics/ServiceDetailCard";
-import GlassCard from "../components/nontronics/GlassCard";
 import Marquee from "../components/nontronics/Marquee";
 
 const MOD_SERVICES = [
+  {
+    title: "PC MODIFICATIONS",
+    description: "Targeted desktop and laptop upgrades to improve thermals, speed, and reliability. We handle performance tuning, thermal paste replacement, storage upgrades, and hardware optimization.",
+    image: "https://images.unsplash.com/photo-1555618254-84e2cf498b01?q=80&w=1171",
+    features: [
+      "Thermal paste & replacement",
+      "RAM/storage upgrades",
+      "Cooling/airflow improvements",
+      "Power & performance tuning",
+      "System cleanup & optimization",
+    ],
+  },
   {
     title: "CONTROLLER MODIFICATIONS",
     description: "Take your gameplay to the next level with custom controller mods. From rapid-fire triggers to custom button remapping — we build controllers that match your playstyle.",
@@ -48,7 +59,7 @@ const MOD_SERVICES = [
   {
     title: "LED MODIFICATIONS",
     description: "Illuminate your setup with custom LED integrations. Programmable RGB lighting for controllers, consoles, and peripherals.",
-    image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1632749042303-7f7a18ed6ff0?q=80&w=1170",
     features: [
       "RGB LED button lighting",
       "Under-glow LED strips",
@@ -67,13 +78,13 @@ export default function Modifications() {
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=1920&q=80"
-            alt=""
-            className="w-full h-full object-cover"
-            style={{ opacity: 0.35 }}
+            alt="Gaming controller modification"
+            className="w-full h-full object-cover opacity-50 dark:opacity-[0.35]"
+            loading="eager"
           />
           <div className="absolute inset-0" style={{ background: "var(--bg-overlay)" }} />
         </div>
-        <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-primary/10 rounded-full blur-[120px]" />
+        <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-primary/10 blur-[120px]" />
 
         <div className="relative max-w-7xl mx-auto">
           <motion.div
@@ -129,7 +140,7 @@ export default function Modifications() {
             {[
               { img: "https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=600&q=80", label: "PRECISION SOLDERING" },
               { img: "https://images.unsplash.com/photo-1625842268584-8f3296236761?w=600&q=80", label: "CUSTOM AESTHETICS" },
-              { img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&q=80", label: "LED INTEGRATION" },
+              { img: "https://images.unsplash.com/photo-1632749042303-7f7a18ed6ff0?q=80&w=1170", label: "LED INTEGRATION" },
             ].map((item, i) => (
               <motion.div
                 key={item.label}
@@ -137,9 +148,9 @@ export default function Modifications() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="relative h-64 md:h-80 rounded-lg overflow-hidden group"
+                className="relative h-64 md:h-80 overflow-hidden group"
               >
-                <img src={item.img} alt={item.label} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                <img src={item.img} alt={item.label} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-6">
                   <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-primary">{item.label}</span>
@@ -156,7 +167,7 @@ export default function Modifications() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="glass-panel-strong rounded-2xl p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8"
+          className="glass-panel-strong p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8"
         >
           <div>
             <h2 className="font-display text-3xl md:text-4xl tracking-wide text-foreground mb-2">
@@ -164,12 +175,20 @@ export default function Modifications() {
             </h2>
             <p className="text-muted-foreground text-sm font-light">Tell us what you're looking for — we'll make it happen.</p>
           </div>
-          <Link
-            to={createPageUrl("Contact")}
-            className="inline-flex items-center gap-3 bg-primary text-primary-foreground font-mono text-xs tracking-[0.15em] uppercase px-8 py-4 rounded-lg hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 transition-all duration-200 shrink-0"
-          >
-            Get a Quote <ArrowRight className="w-4 h-4" />
-          </Link>
+          <div className="flex flex-col items-center gap-4">
+            <Link
+              to={createPageUrl("Contact")}
+              className="inline-flex items-center gap-3 bg-primary text-primary-foreground font-mono text-xs tracking-[0.15em] uppercase px-8 py-4 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 transition-all duration-200 shrink-0"
+            >
+              Get a Quote <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              to={createPageUrl("Resources")}
+              className="font-mono text-[11px] tracking-[0.15em] uppercase text-muted-foreground border-b border-muted pb-0.5 hover:text-foreground hover:border-foreground transition-colors"
+            >
+              Shipping & turnaround info
+            </Link>
+          </div>
         </motion.div>
       </section>
     </div>

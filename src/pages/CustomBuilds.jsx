@@ -24,7 +24,7 @@ const BUILD_SERVICES = [
   {
     title: "WORKSTATION BUILDS",
     description: "Professional workstations for content creators, developers, and engineers. Multi-threaded performance, ECC memory options, and reliability-focused builds.",
-    image: "https://images.unsplash.com/photo-1547082299-de196ea013d6?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1600614518987-f9c081f69e0e?q=80&w=1170",
     features: [
       "Multi-core CPU configurations",
       "High-capacity RAM options (64GB+)",
@@ -51,20 +51,20 @@ const TIERS = [
   {
     name: "STARTER",
     tier: "Entry Gaming",
-    specs: ["AMD Ryzen 5 / Intel i5", "16GB DDR5", "RTX 4060 / RX 7600", "500GB NVMe SSD"],
+    specs: ["AMD Ryzen 5 / Intel i5", "16GB DDR5", "RTX 5/4060 / RX 7600", "500GB NVMe SSD"],
     icon: HardDrive,
   },
   {
     name: "PERFORMANCE",
     tier: "Enthusiast",
-    specs: ["AMD Ryzen 7 / Intel i7", "32GB DDR5", "RTX 4070 Ti / RX 7800 XT", "1TB NVMe SSD"],
+    specs: ["AMD Ryzen 7 / Intel i7", "32GB DDR5", "RTX 4/5070+ Ti / RX 7800 XT", "1TB NVMe SSD"],
     icon: Cpu,
     featured: true,
   },
   {
     name: "ULTIMATE",
     tier: "No Compromise",
-    specs: ["AMD Ryzen 9 / Intel i9", "64GB DDR5", "RTX 4090 / RX 7900 XTX", "2TB NVMe SSD"],
+    specs: ["AMD Ryzen 9 / Intel i9", "64GB DDR5", "RTX 4/5090 / RX 7900 XTX", "2TB NVMe SSD"],
     icon: Monitor,
   },
 ];
@@ -77,13 +77,13 @@ export default function CustomBuilds() {
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=1920&q=80"
-            alt=""
-            className="w-full h-full object-cover"
-            style={{ opacity: 0.35 }}
+            alt="Custom PC build"
+            className="w-full h-full object-cover opacity-50 dark:opacity-[0.35]"
+            loading="eager"
           />
           <div className="absolute inset-0" style={{ background: "var(--bg-overlay)" }} />
         </div>
-        <div className="absolute bottom-1/3 left-1/4 w-72 h-72 bg-primary/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/3 left-1/4 w-72 h-72 bg-primary/10 blur-[120px]" />
 
         <div className="relative max-w-7xl mx-auto">
           <motion.div
@@ -109,7 +109,7 @@ export default function CustomBuilds() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="mt-6 text-muted-foreground text-sm md:text-base font-light leading-relaxed max-w-lg"
           >
-            Bespoke PC builds tailored to your exact needs. From competitive gaming to professional workstations — built with precision.
+            Custom PC builds tailored to your exact needs. From competitive gaming to professional workstations — built with precision.
           </motion.p>
         </div>
       </section>
@@ -133,7 +133,7 @@ export default function CustomBuilds() {
       {/* Tiers */}
       <section className="relative px-6 md:px-12 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0 bg-secondary/40" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/3 rounded-full blur-[150px]" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/3 blur-[150px]" />
         
         <div className="relative max-w-7xl mx-auto">
           <SectionHeader
@@ -149,7 +149,7 @@ export default function CustomBuilds() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className={`rounded-lg p-8 md:p-10 ${
+                className={`p-8 md:p-10 ${
                   tier.featured
                     ? "glass-panel-strong border-primary/30 accent-glow"
                     : "glass-panel"
@@ -161,7 +161,7 @@ export default function CustomBuilds() {
                 <ul className="space-y-3">
                   {tier.specs.map((spec) => (
                     <li key={spec} className="text-sm text-muted-foreground font-light flex items-center gap-2">
-                      <div className="w-1 h-1 rounded-full bg-primary" />
+                      <div className="w-1 h-1 bg-primary" />
                       {spec}
                     </li>
                   ))}
@@ -184,7 +184,7 @@ export default function CustomBuilds() {
           {[
             { step: "01", title: "CONSULT", desc: "We discuss your use case, budget, and preferences to define the perfect build." },
             { step: "02", title: "SPEC", desc: "We select and source the best components for your build, optimized for value and performance." },
-            { step: "03", title: "BUILD", desc: "Expert assembly with meticulous cable management, thermal optimization, and clean aesthetics." },
+            { step: "03", title: "BUILD", desc: "Expert assembly with proper cable management, thermal optimization, and clean aesthetics." },
             { step: "04", title: "TEST", desc: "Full stress testing, benchmarking, and burn-in to ensure stability before handoff." },
           ].map((item, i) => (
             <GlassCard key={item.step}>
@@ -202,7 +202,7 @@ export default function CustomBuilds() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="glass-panel-strong rounded-2xl p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8"
+          className="glass-panel-strong p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8"
         >
           <div>
             <h2 className="font-display text-3xl md:text-4xl tracking-wide text-foreground mb-2">
@@ -210,12 +210,20 @@ export default function CustomBuilds() {
             </h2>
             <p className="text-muted-foreground text-sm font-light">Tell us about your dream build — we'll make it reality.</p>
           </div>
-          <Link
-            to={createPageUrl("Contact")}
-            className="inline-flex items-center gap-3 bg-primary text-primary-foreground font-mono text-xs tracking-[0.15em] uppercase px-8 py-4 rounded-lg hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 transition-all duration-200 shrink-0"
-          >
-            Start Your Build <ArrowRight className="w-4 h-4" />
-          </Link>
+          <div className="flex flex-col items-center gap-4">
+            <Link
+              to={createPageUrl("Contact")}
+              className="inline-flex items-center gap-3 bg-primary text-primary-foreground font-mono text-xs tracking-[0.15em] uppercase px-8 py-4 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 transition-all duration-200 shrink-0"
+            >
+              Start Your Build <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              to={createPageUrl("Resources")}
+              className="font-mono text-[11px] tracking-[0.15em] uppercase text-muted-foreground border-b border-muted pb-0.5 hover:text-foreground hover:border-foreground transition-colors"
+            >
+              Deposit & shipping info
+            </Link>
+          </div>
         </motion.div>
       </section>
     </div>

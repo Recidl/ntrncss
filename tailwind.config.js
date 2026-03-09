@@ -24,11 +24,6 @@ export default {
         mono: ['"DM Mono"', 'monospace'],
         sans: ['"DM Sans"', 'sans-serif'],
       },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-      },
     },
   },
   plugins: [require("tailwindcss-animate")],

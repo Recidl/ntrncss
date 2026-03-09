@@ -52,6 +52,7 @@ import Repairs from './pages/Repairs';
 import Modifications from './pages/Modifications';
 import CustomBuilds from './pages/CustomBuilds';
 import Contact from './pages/Contact';
+import Resources from './pages/Resources';
 import __Layout from './Layout.jsx';
 
 export const PAGES = {
@@ -60,6 +61,7 @@ export const PAGES = {
     "Modifications": Modifications,
     "CustomBuilds": CustomBuilds,
     "Contact": Contact,
+    "Resources": Resources,
 }
 
 export const pagesConfig = {

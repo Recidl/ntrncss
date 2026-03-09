@@ -9,7 +9,7 @@ const stats = [
 
 export default function StatsBar() {
   return (
-    <div className="glass-panel-strong rounded-2xl overflow-hidden accent-glow">
+    <div className="glass-panel-strong overflow-hidden accent-glow">
       <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-border">
         {stats.map((stat, i) => (
           <motion.div
