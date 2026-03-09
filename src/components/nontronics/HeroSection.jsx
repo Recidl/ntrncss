@@ -4,12 +4,12 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useTheme } from "./ThemeContext";
+import logoSrc from "../../../assets/nontronicsbwplog.png";
 
 const YT_VIDEO_ID = "jenQ3jQFhww";
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&q=85";
 
 export default function HeroSection() {
-  const logoSrc = `${import.meta.env.BASE_URL}assets/nontronicsbwplog.png`;
   const { dark } = useTheme();
   const [useVideoFallback, setUseVideoFallback] = useState(false);
   const fallbackTimeoutRef = useRef(null);

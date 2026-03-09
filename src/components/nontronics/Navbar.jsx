@@ -4,6 +4,7 @@ import { createPageUrl } from "@/utils";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "./ThemeContext";
+import logoSrc from "../../../assets/nontronicslog.png";
 
 const NAV_ITEMS = [
   { label: "Home", page: "Home" },
@@ -15,7 +16,6 @@ const NAV_ITEMS = [
 ];
 
 export default function Navbar() {
-  const logoSrc = `${import.meta.env.BASE_URL}assets/nontronicslog.png`;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(
     typeof navigator !== "undefined" ? navigator.onLine : true

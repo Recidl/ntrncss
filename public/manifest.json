@@ -11,13 +11,13 @@
   "categories": ["shopping", "business"],
   "screenshots": [
     {
-      "src": "assets/nontronicslog.png",
+      "src": "nontronicslog.png",
       "sizes": "192x192",
       "type": "image/png",
       "form_factor": "narrow"
     },
     {
-      "src": "assets/nontronicslog.png",
+      "src": "nontronicslog.png",
       "sizes": "512x512",
       "type": "image/png",
       "form_factor": "wide"
@@ -25,19 +25,19 @@
   ],
   "icons": [
     {
-      "src": "assets/nontronicsfavi.png",
+      "src": "nontronicsfavi.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "assets/nontronicsfavi.png",
+      "src": "nontronicsfavi.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "assets/nontronicsfavi.png",
+      "src": "nontronicsfavi.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
@@ -51,7 +51,7 @@
       "url": "Contact",
       "icons": [
         {
-          "src": "assets/nontronicsfavi.png",
+          "src": "nontronicsfavi.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -64,7 +64,7 @@
       "url": ".",
       "icons": [
         {
-          "src": "assets/nontronicsfavi.png",
+          "src": "nontronicsfavi.png",
           "sizes": "192x192",
           "type": "image/png"
         }

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Instagram, Youtube, Facebook } from "lucide-react";
 import { createPageUrl } from "@/utils";
+import logoSrc from "../../../assets/nontronicslog.png";
 
 const SOCIAL_LINKS = [
   { icon: Instagram, href: "https://instagram.com", label: "Instagram", hoverClass: "footer-social-instagram" },
@@ -9,8 +10,6 @@ const SOCIAL_LINKS = [
 ];
 
 export default function Footer() {
-  const logoSrc = `${import.meta.env.BASE_URL}assets/nontronicslog.png`;
-
   return (
     <footer className="glass-panel-strong border-t border-border mt-0">
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-20">
