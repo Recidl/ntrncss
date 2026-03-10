@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import db from '@/api/base44Client';
 
 const AuthContext = createContext();
+const BASE_URL = import.meta.env.BASE_URL || '/';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -28,14 +29,14 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setIsAuthenticated(false);
     // For static site, just clear local state
-    if (shouldRedirect && window.location.pathname !== '/') {
-      window.location.href = '/';
+    if (shouldRedirect && window.location.pathname !== BASE_URL) {
+      window.location.href = BASE_URL;
     }
   };
 
   const navigateToLogin = () => {
     // For static site, redirect to home
-    window.location.href = '/';
+    window.location.href = BASE_URL;
   };
 
   return (

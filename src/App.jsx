@@ -70,6 +70,7 @@ const AuthenticatedApp = () => {
 };
 
 function App() {
+  const routerBase = import.meta.env.BASE_URL || '/';
 
   // Register service worker only in production. In dev, remove stale workers/caches.
   useEffect(() => {
@@ -183,7 +184,7 @@ function App() {
         <QueryClientProvider client={queryClientInstance}>
           <OfflineIndicator />
           <SiteNotificationDropdown />
-          <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <Router basename={routerBase} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <AuthenticatedApp />
           </Router>
           <Toaster />
