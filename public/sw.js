@@ -1,18 +1,24 @@
 // Service Worker for Nontronics PWA
 const CACHE_NAME = 'nontronics-v2';
+const BASE_PATH = new URL(self.registration.scope).pathname;
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json'
+  BASE_PATH,
+  `${BASE_PATH}index.html`,
+  `${BASE_PATH}manifest.json`
 ];
 
 // Install event - cache resources
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(urlsToCache).catch(err => {
-        console.log('Cache addAll error:', err);
-      });
+    caches.open(CACHE_NAME).then(async cache => {
+      // Cache entries individually so one 404 does not fail SW installation.
+      await Promise.allSettled(urlsToCache.map(async url => {
+        try {
+          await cache.add(url);
+        } catch (err) {
+          console.log('Cache add error:', url, err);
+        }
+      }));
     })
   );
   self.skipWaiting();
@@ -43,7 +49,7 @@ self.addEventListener('fetch', event => {
 
   const requestUrl = new URL(event.request.url);
   const isSameOrigin = requestUrl.origin === self.location.origin;
-  const isSensitiveEndpoint = requestUrl.pathname.startsWith('/contact.php');
+  const isSensitiveEndpoint = requestUrl.pathname === `${BASE_PATH}contact.php`;
 
   // Never cache cross-origin requests or sensitive endpoints.
   if (!isSameOrigin || isSensitiveEndpoint) {
@@ -67,7 +73,7 @@ self.addEventListener('fetch', event => {
         .catch(() => {
           return caches.match(event.request)
             .then(cachedResponse => {
-              return cachedResponse || caches.match('/');
+              return cachedResponse || caches.match(BASE_PATH);
             });
         })
     );
