@@ -40,6 +40,27 @@ const WHY_ITEMS = [
   { icon: Monitor, title: "Custom Solutions", desc: "Tailored builds and mods designed for your exact needs." },
 ];
 
+const FEATURED_JOBS = [
+  {
+    tag: "PS5 HDMI Recovery",
+    outcome: "Signal Restored",
+    detail: "Replaced damaged port, reinforced pads, passed 4-hour thermal and signal test.",
+    turnaround: "48 Hours",
+  },
+  {
+    tag: "Performance Build",
+    outcome: "216 FPS Avg",
+    detail: "Built and tuned for 1440p competitive play with controlled noise profile.",
+    turnaround: "6 Days",
+  },
+  {
+    tag: "Controller Drift Fix",
+    outcome: "0 Deadzone Drift",
+    detail: "Module swap + calibration profile with trigger response retune.",
+    turnaround: "24 Hours",
+  },
+];
+
 export default function Home() {
   return (
     <div>
@@ -92,6 +113,35 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Signature Proof */}
+      <section className="px-6 md:px-12 py-24 max-w-7xl mx-auto">
+        <SectionHeader
+          number="03"
+          title="RECENT WINS"
+          subtitle="Verified service outcomes from real jobs, tracked by turnaround and final QA result."
+        />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+          {FEATURED_JOBS.map((job, i) => (
+            <motion.div
+              key={job.tag}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08 }}
+              className="glass-panel p-7"
+            >
+              <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-primary">{job.tag}</span>
+              <h3 className="font-display text-3xl tracking-wide text-foreground mt-3">{job.outcome}</h3>
+              <p className="text-muted-foreground text-sm font-light leading-relaxed mt-3">{job.detail}</p>
+              <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
+                <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">Turnaround</span>
+                <span className="text-xs font-mono uppercase tracking-[0.16em] text-primary">{job.turnaround}</span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="px-6 md:px-12 py-24 md:py-32 max-w-7xl mx-auto">
         <motion.div
@@ -105,7 +155,7 @@ export default function Home() {
           <div className="absolute bottom-0 left-0 w-56 h-56 dark:bg-primary/5 bg-primary/15 blur-[80px]" />
 
           <div className="relative">
-            <h2 className="font-display text-4xl md:text-6xl tracking-wide text-foreground mb-4">
+            <h2 className="font-display text-4xl md:text-6xl tracking-wide text-black dark:text-foreground mb-4">
               READY TO <span className="text-primary">START</span>?
             </h2>
 

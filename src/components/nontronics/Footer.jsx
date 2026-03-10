@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Instagram, Youtube, Facebook } from "lucide-react";
 import { createPageUrl } from "@/utils";
-import logoSrc from "../../../assets/nontronicslog.png";
 
 const SOCIAL_LINKS = [
   { icon: Instagram, href: "https://instagram.com", label: "Instagram", hoverClass: "footer-social-instagram" },
@@ -17,7 +16,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-2">
             <img
-              src={logoSrc}
+              src="/assets/nontronicslog.png"
               alt="Nontronics"
               className="h-8 w-auto mb-5 logo-img"
             />
@@ -91,13 +90,30 @@ export default function Footer() {
           <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground">
             © {new Date().getFullYear()} Nontronics LLC. All rights reserved.
           </span>
-          <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground">
-            Built with precision
-          </span>
+          <div className="flex flex-wrap items-center justify-center gap-3 text-[10px] font-mono tracking-[0.15em] uppercase text-muted-foreground">
+            <Link to={createPageUrl("TermsOfService")} className="hover:text-foreground transition-colors">
+              Terms of Service
+            </Link>
+            <span>|</span>
+            <Link to={createPageUrl("PrivacyPolicy")} className="hover:text-foreground transition-colors">
+              Privacy Policy
+            </Link>
+            <span>|</span>
+            <Link to={createPageUrl("RepairServiceTerms")} className="hover:text-foreground transition-colors">
+              Repair / Service Terms
+            </Link>
+            <span>|</span>
+            <Link to={createPageUrl("ShippingPolicy")} className="hover:text-foreground transition-colors">
+              Shipping Policy
+            </Link>
+          </div>
         </div>
 
         <p className="mt-5 text-center text-xs text-muted-foreground/90">
           Nontronics LLC. is an independent repair, modification, and manufacturing service; We are not affiliated with any listed brands.
+        </p>
+        <p className="mt-2 text-center text-xs text-muted-foreground/90">
+          By using this website, you agree to our <Link to={createPageUrl("TermsOfService")} className="text-primary hover:underline">Terms of Service</Link>, <Link to={createPageUrl("PrivacyPolicy")} className="text-primary hover:underline">Privacy Policy</Link>, <Link to={createPageUrl("ShippingPolicy")} className="text-primary hover:underline">Shipping Policy</Link>, and <Link to={createPageUrl("RepairServiceTerms")} className="text-primary hover:underline">Repair / Service Terms</Link>.
         </p>
       </div>
     </footer>

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Cpu, Monitor, HardDrive } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
 import SectionHeader from "../components/nontronics/SectionHeader";
@@ -10,6 +10,7 @@ import Marquee from "../components/nontronics/Marquee";
 
 const BUILD_SERVICES = [
   {
+    value: "gaming_pc_builds",
     title: "GAMING PC BUILDS",
     description: "High-performance gaming rigs built to dominate. From 1080p esports machines to 4K ultra-wide powerhouses — we spec and assemble PCs that deliver frames where it matters.",
     image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=800&q=80",
@@ -22,6 +23,7 @@ const BUILD_SERVICES = [
     ],
   },
   {
+    value: "workstation_builds",
     title: "WORKSTATION BUILDS",
     description: "Professional workstations for content creators, developers, and engineers. Multi-threaded performance, ECC memory options, and reliability-focused builds.",
     image: "https://images.unsplash.com/photo-1600614518987-f9c081f69e0e?q=80&w=1170",
@@ -34,6 +36,7 @@ const BUILD_SERVICES = [
     ],
   },
   {
+    value: "compact_itx_builds",
     title: "COMPACT & ITX BUILDS",
     description: "Maximum power in minimal space. Small form factor builds that don't compromise on performance. Perfect for desk setups and LAN parties.",
     image: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=800&q=80",
@@ -69,7 +72,24 @@ const TIERS = [
   },
 ];
 
+const BUILD_BENCHMARKS = [
+  { profile: "FPS Hunter", metric: "240+ FPS", note: "1080p competitive profile with low latency tuning" },
+  { profile: "Creator Station", metric: "4K Timeline Smooth", note: "Optimized for render consistency and storage throughput" },
+  { profile: "Silent Performance", metric: "<34 dBA", note: "Noise-targeted fan curves with high sustained clocks" },
+];
+
 export default function CustomBuilds() {
+  const navigate = useNavigate();
+
+  const handleSelectService = (category) => {
+    const params = new URLSearchParams({
+      service: "builds",
+      category,
+      from: "service-card",
+    });
+    navigate(`${createPageUrl("Contact")}?${params.toString()}`);
+  };
+
   return (
     <div>
       {/* Hero */}
@@ -82,6 +102,7 @@ export default function CustomBuilds() {
             loading="eager"
           />
           <div className="absolute inset-0" style={{ background: "var(--bg-overlay)" }} />
+          <div className="absolute inset-0 grid-overlay" />
         </div>
         <div className="absolute bottom-1/3 left-1/4 w-72 h-72 bg-primary/10 blur-[120px]" />
 
@@ -99,7 +120,7 @@ export default function CustomBuilds() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="font-display text-5xl sm:text-7xl md:text-8xl tracking-tight text-foreground"
+            className="font-display text-5xl sm:text-7xl md:text-8xl tracking-tight text-black dark:text-foreground"
           >
             CUSTOM <span className="text-primary">BUILDS</span>
           </motion.h1>
@@ -125,7 +146,14 @@ export default function CustomBuilds() {
         />
         <div className="space-y-6 md:space-y-8">
           {BUILD_SERVICES.map((service, i) => (
-            <ServiceDetailCard key={service.title} {...service} index={i} />
+            <ServiceDetailCard
+              key={service.title}
+              {...service}
+              serviceLabel="Builds"
+              categoryLabel={service.title}
+              index={i}
+              onSelect={() => handleSelectService(service.value)}
+            />
           ))}
         </div>
       </section>
@@ -177,9 +205,33 @@ export default function CustomBuilds() {
         </div>
       </section>
 
+      <section className="px-6 md:px-12 pb-24 max-w-7xl mx-auto">
+        <SectionHeader
+          number="03"
+          title="TARGET OUTCOMES"
+          subtitle="Reference performance goals we configure around during planning."
+        />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+          {BUILD_BENCHMARKS.map((item, i) => (
+            <motion.div
+              key={item.profile}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08 }}
+              className="glass-panel p-6"
+            >
+              <p className="font-mono text-[10px] tracking-[0.18em] uppercase text-primary">{item.profile}</p>
+              <h3 className="font-display text-3xl tracking-wide text-foreground mt-3">{item.metric}</h3>
+              <p className="mt-3 text-sm text-muted-foreground font-light leading-relaxed">{item.note}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
       {/* Process */}
       <section className="px-6 md:px-12 py-24 md:py-32 max-w-7xl mx-auto">
-        <SectionHeader number="03" title="BUILD PROCESS" />
+        <SectionHeader number="04" title="BUILD PROCESS" />
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {[
             { step: "01", title: "CONSULT", desc: "We discuss your use case, budget, and preferences to define the perfect build." },
@@ -205,7 +257,7 @@ export default function CustomBuilds() {
           className="glass-panel-strong p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8"
         >
           <div>
-            <h2 className="font-display text-3xl md:text-4xl tracking-wide text-foreground mb-2">
+            <h2 className="font-display text-3xl md:text-4xl tracking-wide text-black dark:text-foreground mb-2">
               LET'S <span className="text-primary">BUILD</span>
             </h2>
             <p className="text-muted-foreground text-sm font-light">Tell us about your dream build — we'll make it reality.</p>

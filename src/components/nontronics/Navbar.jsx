@@ -4,7 +4,6 @@ import { createPageUrl } from "@/utils";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "./ThemeContext";
-import logoSrc from "../../../assets/nontronicslog.png";
 
 const NAV_ITEMS = [
   { label: "Home", page: "Home" },
@@ -13,6 +12,13 @@ const NAV_ITEMS = [
   { label: "Builds", page: "CustomBuilds" },
   { label: "Resources", page: "Resources" },
   { label: "Contact", page: "Contact" },
+];
+
+const LEGAL_ITEMS = [
+  { label: "Terms of Service", page: "TermsOfService" },
+  { label: "Privacy Policy", page: "PrivacyPolicy" },
+  { label: "Shipping Policy", page: "ShippingPolicy" },
+  { label: "Repair / Service Terms", page: "RepairServiceTerms" },
 ];
 
 export default function Navbar() {
@@ -62,7 +68,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link to={createPageUrl("Home")} className="z-10 flex items-center">
             <img
-              src={logoSrc}
+              src="/assets/nontronicslog.png"
               alt="Nontronics"
               className="h-8 w-auto logo-img"
             />
@@ -104,7 +110,7 @@ export default function Navbar() {
             <button
               onClick={() => setDark(!dark)}
               aria-label="Toggle theme"
-              className="min-w-[44px] min-h-[44px] w-8 h-8 md:w-8 md:h-8 md:min-w-0 md:min-h-0 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors hover:bg-black/5 dark:hover:bg-white/5 -my-1 rounded-full"
+              className="min-w-[44px] min-h-[44px] w-8 h-8 md:w-8 md:h-8 md:min-w-0 md:min-h-0 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors hover:bg-primary/10 dark:hover:bg-white/5 -my-1 rounded-full"
             >
               {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
@@ -115,7 +121,7 @@ export default function Navbar() {
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
               aria-controls="mobile-nav-drawer"
-              className="md:hidden text-foreground min-w-[44px] min-h-[44px] flex items-center justify-center -my-1 -mr-1 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+              className="md:hidden text-foreground min-w-[44px] min-h-[44px] flex items-center justify-center -my-1 -mr-1 hover:bg-primary/10 dark:hover:bg-white/5 transition-colors"
             >
               <Menu className="w-5 h-5 shrink-0" />
             </button>
@@ -146,7 +152,7 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", stiffness: 320, damping: 32 }}
-              className="fixed top-0 right-0 bottom-0 z-50 w-64 md:hidden flex flex-col pt-20 pb-8 px-6"
+              className="fixed top-0 right-0 bottom-0 z-50 w-64 md:hidden flex flex-col pt-20 pb-0 px-6"
               style={{
                 background: "var(--glass-strong-bg)",
                 backdropFilter: "blur(50px)",
@@ -158,7 +164,7 @@ export default function Navbar() {
               <button
                 onClick={() => setMobileOpen(false)}
                 aria-label="Close menu"
-                className="absolute top-4 right-4 min-w-[44px] min-h-[44px] flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                className="absolute top-4 right-4 min-w-[44px] min-h-[44px] flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors hover:bg-primary/10 dark:hover:bg-white/5"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -177,7 +183,7 @@ export default function Navbar() {
                       className={`flex items-center gap-3 py-3 px-3 font-mono text-sm tracking-[0.1em] uppercase transition-colors ${
                         isActive(item.page)
                           ? "text-primary bg-primary/8"
-                          : "text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5"
+                          : "text-muted-foreground hover:text-foreground hover:bg-primary/10 dark:hover:bg-white/5"
                       }`}
                     >
                       {isActive(item.page) && (
@@ -189,14 +195,57 @@ export default function Navbar() {
                 ))}
               </ul>
 
-              {/* Theme toggle at bottom of drawer */}
-              <button
-                onClick={() => setDark(!dark)}
-                className="flex items-center gap-3 py-3 px-3 text-muted-foreground hover:text-foreground font-mono text-xs tracking-[0.1em] uppercase transition-colors hover:bg-black/5 dark:hover:bg-white/5"
-              >
-                {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                {dark ? "Light Mode" : "Dark Mode"}
-              </button>
+              <div className="mt-3 border-t border-border/60 pt-4">
+                <p className="px-3 mb-2 font-mono text-[10px] tracking-[0.14em] uppercase text-muted-foreground">
+                  Legal
+                </p>
+                <ul className="space-y-1">
+                  {LEGAL_ITEMS.map((item, i) => (
+                    <motion.li
+                      key={item.page}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: (NAV_ITEMS.length + i) * 0.05 }}
+                    >
+                      <Link
+                        to={createPageUrl(item.page)}
+                        onClick={() => setMobileOpen(false)}
+                        className={`block py-2 px-3 text-xs tracking-[0.08em] uppercase transition-colors ${
+                          isActive(item.page)
+                            ? "text-primary bg-primary/8"
+                            : "text-muted-foreground hover:text-foreground hover:bg-primary/10 dark:hover:bg-white/5"
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="mt-3 border-t border-border/60 pt-3">
+                {/* Theme toggle at bottom of drawer */}
+                <button
+                  onClick={() => setDark(!dark)}
+                  className="w-full flex items-center gap-3 py-3 px-3 text-muted-foreground hover:text-foreground font-mono text-xs tracking-[0.1em] uppercase transition-colors hover:bg-primary/10 dark:hover:bg-white/5"
+                >
+                  {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                  {dark ? "Light Mode" : "Dark Mode"}
+                </button>
+              </div>
+
+              <div className="mt-auto -mx-6 px-4 py-1.5 border-t border-border/60 bg-white/25 dark:bg-white/10">
+                <div className="flex items-center justify-between gap-2 whitespace-nowrap">
+                  <span className="font-mono text-[9px] tracking-[0.12em] uppercase text-muted-foreground">
+                    2026 NONTRONICS LLC.
+                  </span>
+                  <img
+                    src="/assets/nontronicslog.png"
+                    alt="Nontronics"
+                    className="logo-img h-5 w-auto opacity-85"
+                  />
+                </div>
+              </div>
             </motion.div>
           </>
         )}

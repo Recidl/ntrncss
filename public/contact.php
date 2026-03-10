@@ -3,38 +3,86 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+require __DIR__ . '/security.php';
+
+security_set_response_headers();
+
 // Allow only POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
-    exit;
+  security_json_fail(405, 'Method not allowed');
 }
 
-header('Content-Type: application/json');
+$allowedHosts = security_env_list('APP_ALLOWED_HOSTS', [
+  'nontronics.com',
+  'nontronics.tech',
+  'www.nontronics.tech',
+  'www.nontronics.com',
+  'localhost',
+  '127.0.0.1',
+]);
+
+$currentHost = strtolower(trim((string) ($_SERVER['HTTP_HOST'] ?? '')));
+if ($currentHost !== '') {
+  $allowedHosts[] = $currentHost;
+}
+
+if (!security_is_allowed_origin($allowedHosts)) {
+  security_json_fail(403, 'Origin denied');
+}
+
+$requestIp = security_get_client_ip();
+if (!security_rate_limit('contact_' . $requestIp, 8, 600)) {
+  security_json_fail(429, 'Too many requests. Please try again later.');
+}
 
 // Read JSON body
 $raw = file_get_contents('php://input');
+$maxPayloadBytes = 2 * 1024 * 1024;
+if ($raw === false || strlen($raw) > $maxPayloadBytes) {
+  security_json_fail(413, 'Payload too large');
+}
+
 $data = json_decode($raw, true);
 
 if (!is_array($data)) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Invalid request body']);
-    exit;
+  security_json_fail(400, 'Invalid request body');
 }
 
 // Extract fields
-$name        = trim($data['name'] ?? '');
-$email       = trim($data['email'] ?? '');
-$phone       = trim($data['phone'] ?? '');
-$service     = trim($data['service'] ?? '');
-$category    = trim($data['category'] ?? '');
-$area        = trim($data['area'] ?? '');
-$budget      = trim($data['budget'] ?? '');
-$message     = trim($data['message'] ?? '');
-$photoBase64 = trim($data['photoBase64'] ?? '');
-$photoFileName = trim($data['photoFileName'] ?? '');
+$name        = security_clean_text($data['name'] ?? '', 120);
+$email       = security_clean_text($data['email'] ?? '', 254);
+$phone       = security_clean_text($data['phone'] ?? '', 40);
+$service     = security_clean_text($data['service'] ?? '', 64);
+$category    = security_clean_text($data['category'] ?? '', 64);
+$device      = security_clean_text($data['device'] ?? '', 64);
+$brand       = security_clean_text($data['brand'] ?? '', 64);
+$performance = security_clean_text($data['performance'] ?? '', 64);
+$area        = security_clean_text($data['area'] ?? '', 40);
+$budget      = security_clean_text($data['budget'] ?? '', 60);
+$message     = security_clean_text($data['message'] ?? '', 4000);
+$photoBase64 = trim((string) ($data['photoBase64'] ?? ''));
+$photoFileName = trim((string) ($data['photoFileName'] ?? ''));
 $meta        = $data['meta'] ?? [];
+
+$trapField = security_clean_text($data['website'] ?? '', 32);
+$formStartedAt = (int) ($data['formStartedAt'] ?? 0);
+
+if ($trapField !== '') {
+  security_json_fail(400, 'Invalid submission');
+}
+
+if ($formStartedAt > 0) {
+  $elapsed = time() - $formStartedAt;
+  if ($elapsed < 2 || $elapsed > 7200) {
+    security_json_fail(400, 'Invalid submission timing');
+  }
+}
+
+foreach ([$name, $email, $phone, $service, $category, $device, $brand, $performance, $area, $budget, $message] as $field) {
+  if (security_contains_suspicious_payload($field)) {
+    security_json_fail(400, 'Suspicious payload detected');
+  }
+}
 
 // Validate and sanitize photo data if present
 $photoAttachmentPath = null;
@@ -42,16 +90,32 @@ if (!empty($photoBase64) && !empty($photoFileName)) {
     // Validate base64
     if (preg_match('/^data:image\/(jpeg|png|webp);base64,/', $photoBase64, $matches)) {
         // Extract base64 content
-        $photoData = base64_decode(explode(',', $photoBase64)[1]);
+    $parts = explode(',', $photoBase64, 2);
+    $photoData = isset($parts[1]) ? base64_decode($parts[1], true) : false;
         if ($photoData === false) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Invalid photo data']);
-            exit;
+      security_json_fail(400, 'Invalid photo data');
         }
+
+    if (strlen($photoData) > 10 * 1024 * 1024) {
+      security_json_fail(413, 'Photo exceeds 10MB limit');
+    }
+
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $detectedMime = $finfo ? finfo_buffer($finfo, $photoData) : '';
+    if ($finfo) {
+      finfo_close($finfo);
+    }
+
+    $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!in_array($detectedMime, $allowedMimes, true)) {
+      security_json_fail(400, 'Unsupported photo type');
+    }
         
         // Sanitize filename
-        $photoFileName = preg_replace('/[^a-zA-Z0-9._-]/', '', $photoFileName);
-        $photoFileName = preg_replace('/_+/', '_', $photoFileName);
+    $photoFileName = security_sanitize_filename($photoFileName);
+    if ($photoFileName === '') {
+      $photoFileName = 'upload.' . ($matches[1] === 'jpeg' ? 'jpg' : $matches[1]);
+    }
         
         // Create temp path
         $tempDir = sys_get_temp_dir() . '/nontronics-uploads';
@@ -63,18 +127,18 @@ if (!empty($photoBase64) && !empty($photoFileName)) {
         
         // Write file
         if (file_put_contents($photoAttachmentPath, $photoData) === false) {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Failed to process photo']);
-            exit;
+      security_json_fail(500, 'Failed to process photo');
         }
     }
 }
 
 // Basic validation (frontend already validates, this is just a safety net)
 if ($name === '' || $email === '' || $service === '' || $category === '' || $message === '') {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Missing required fields']);
-    exit;
+  security_json_fail(400, 'Missing required fields');
+}
+
+if (!security_validate_email($email)) {
+  security_json_fail(400, 'Invalid email address');
 }
 
 // Map internal codes to human-friendly labels
@@ -107,6 +171,140 @@ $categoryLabels = [
   'other_non_service'            => 'Other (Non-Service)',
 ];
 
+$repairDeviceLabels = [
+  'phone' => 'Phone',
+  'tablet' => 'Tablet',
+  'laptop' => 'Laptop',
+  'desktop_pc' => 'Desktop PC',
+  'tv' => 'TV',
+  'monitor' => 'Monitor',
+  'smartwatch' => 'Smartwatch',
+  'console' => 'Console',
+  'controller' => 'Controller',
+  'handheld' => 'Handheld',
+  'audio_device' => 'Audio Device',
+  'other' => 'Other',
+];
+
+$repairBrandLabels = [
+  'apple' => 'Apple',
+  'samsung' => 'Samsung',
+  'google' => 'Google',
+  'sony' => 'Sony',
+  'lg' => 'LG',
+  'microsoft' => 'Microsoft',
+  'nintendo' => 'Nintendo',
+  'valve' => 'Valve',
+  'asus' => 'ASUS',
+  'acer' => 'Acer',
+  'dell' => 'Dell',
+  'hp' => 'HP',
+  'lenovo' => 'Lenovo',
+  'msi' => 'MSI',
+  'razer' => 'Razer',
+  'other' => 'Other',
+];
+
+$consoleBrandLabels = [
+  'sony' => 'Sony / PlayStation',
+  'microsoft' => 'Microsoft / Xbox',
+  'nintendo' => 'Nintendo',
+  'valve' => 'Valve / Steam',
+  'other' => 'Other Console Brand',
+];
+
+$performanceLabels = [
+  'budget_low_end' => 'Budget / Low End',
+  'entry_mid_range' => 'Entry Mid-Range',
+  'mid_range' => 'Mid-Range',
+  'high_end' => 'High End',
+  'enthusiast' => 'Enthusiast',
+  'ultra_high_end' => 'Ultra High End',
+];
+
+$serviceCategoryMap = [
+  'repairs' => [
+    'general_damage',
+    'screen_replacement',
+    'battery_service',
+    'controller_repair',
+    'firmware_recovery_repair',
+    'diagnostics_troubleshooting',
+  ],
+  'modifications' => [
+    'pc_modifications',
+    'controller_modifications',
+    'console_modifications',
+    'custom_shells_aesthetics',
+    'led_modifications',
+  ],
+  'builds' => [
+    'gaming_pc_builds',
+    'workstation_builds',
+    'compact_itx_builds',
+  ],
+  'general_inquiry' => [
+    'general_question',
+    'quote_question',
+    'order_or_status_question',
+    'business_or_partnership',
+    'other_non_service',
+  ],
+];
+
+  if (!array_key_exists($service, $serviceLabels)) {
+    security_json_fail(400, 'Invalid service value');
+  }
+
+  $validCategoryValues = array_map(
+    static function (string $key): string {
+      return strtolower(trim($key));
+    },
+    array_keys($categoryLabels)
+  );
+
+  if (!in_array(strtolower($category), $validCategoryValues, true)) {
+    security_json_fail(400, 'Invalid category value');
+  }
+
+  $allowedCategoriesForService = $serviceCategoryMap[$service] ?? [];
+  if (!in_array($category, $allowedCategoriesForService, true)) {
+    security_json_fail(400, 'Category does not match selected service');
+  }
+
+  $requiresRepairDeviceAndBrand = $service === 'repairs';
+  $requiresConsoleBrand =
+    $service === 'modifications' &&
+    in_array($category, ['console_modifications', 'controller_modifications'], true);
+  $requiresBuildPerformance = $service === 'builds';
+
+  if ($requiresRepairDeviceAndBrand) {
+    if ($device === '' || !array_key_exists($device, $repairDeviceLabels)) {
+      security_json_fail(400, 'Invalid device value for repairs');
+    }
+    if ($brand === '' || !array_key_exists($brand, $repairBrandLabels)) {
+      security_json_fail(400, 'Invalid brand value for repairs');
+    }
+  } else {
+    $device = '';
+  }
+
+  if ($requiresConsoleBrand) {
+    if ($brand === '' || !array_key_exists($brand, $consoleBrandLabels)) {
+      security_json_fail(400, 'Invalid brand value for selected modification category');
+    }
+  } elseif (!$requiresRepairDeviceAndBrand) {
+    $brand = '';
+  }
+
+  if ($requiresBuildPerformance) {
+    if ($performance === '' || !array_key_exists($performance, $performanceLabels)) {
+      security_json_fail(400, 'Invalid performance value for builds');
+    }
+  } else {
+    $performance = '';
+  }
+
 // Helper for transforming snake_case into Title Case when we do not have a specific map
 $toTitle = static function (?string $value): string {
     if (!$value) {
@@ -118,6 +316,9 @@ $toTitle = static function (?string $value): string {
 
 $serviceLabel     = $serviceLabels[$service] ?? $toTitle($service);
 $categoryLabel    = $categoryLabels[$category] ?? $toTitle($category);
+$deviceLabel      = $repairDeviceLabels[$device] ?? $toTitle($device);
+$brandLabel       = $repairBrandLabels[$brand] ?? ($consoleBrandLabels[$brand] ?? $toTitle($brand));
+$performanceLabel = $performanceLabels[$performance] ?? $toTitle($performance);
 $areaLabel        = $toTitle($area);
 
 // Meta / proof info
@@ -137,31 +338,38 @@ require __DIR__ . '/PHPMailer/src/PHPMailer.php';
 require __DIR__ . '/PHPMailer/src/SMTP.php';
 require __DIR__ . '/PHPMailer/src/Exception.php';
 
-// Business configuration
-$businessName = 'Nontronics Group';
-$businessBrand = 'Nontronics';
+// Business configuration (env-driven)
+$businessName = security_env('BUSINESS_NAME', 'Nontronics Group');
+$businessBrand = security_env('BUSINESS_BRAND', 'Nontronics');
 
-$adminEmail = 'Nontronics@gmail.com';
+$adminEmail = security_env('CONTACT_ADMIN_EMAIL', '');
+$adminEmails = security_env_list('CONTACT_ADMIN_CC', []);
 
-// TODO: List of additional administrators to CC on admin emails (leave empty or add addresses)
-$adminEmails = [
-    // 'admin2@example.com',
-    'aldo041510@gmail.com',
-];
+$logoUrl = security_env('LOGO_URL', 'https://nontronics.com/assets/nontronicsbwplog.png');
+$noticeLogoUrl = security_env('NOTICE_LOGO_URL', 'https://nontronics.com/assets/nontronicslog.png');
 
-// TODO: Replace with the actual URL where your logo is hosted
-$logoUrl = 'https://your-domain.com/assets/nontronicsbwplog.png';
+// SMTP settings
+$smtpHost = security_env('SMTP_HOST', '');
+$smtpUsername = security_env('SMTP_USERNAME', '');
+$smtpPassword = security_env('SMTP_PASSWORD', '');
+$smtpPort = security_env_int('SMTP_PORT', 587);
+$smtpEncryptionEnv = strtolower((string) security_env('SMTP_ENCRYPTION', 'tls'));
+$smtpEncryption = $smtpEncryptionEnv === 'ssl'
+  ? PHPMailer::ENCRYPTION_SMTPS
+  : PHPMailer::ENCRYPTION_STARTTLS;
 
-// TODO: SMTP settings
-$smtpHost       = 'smtp.example.com';        // e.g. smtp.gmail.com
-$smtpUsername   = 'your-smtp-username';      // full SMTP username
-$smtpPassword   = 'your-smtp-password';      // SMTP password or app-specific password
-$smtpPort       = 587;                       // 587 for TLS, 465 for SSL, etc.
-$smtpEncryption = PHPMailer::ENCRYPTION_STARTTLS; // Or PHPMailer::ENCRYPTION_SMTPS
+$fromEmail = security_env('SMTP_FROM_EMAIL', '');
+$fromName = security_env('SMTP_FROM_NAME', $businessName);
 
-// TODO: Set the "from" email and name that will appear to recipients
-$fromEmail = 'no-reply@your-domain.com';
-$fromName  = $businessName;
+if (
+  $adminEmail === '' ||
+  $smtpHost === '' ||
+  $smtpUsername === '' ||
+  $smtpPassword === '' ||
+  $fromEmail === ''
+) {
+  security_json_fail(500, 'Server mail configuration is incomplete.');
+}
 
 /**
  * Create a preconfigured PHPMailer instance.
@@ -211,6 +419,9 @@ $safeEmail       = htmlspecialchars($email, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'
 $safePhone       = htmlspecialchars($phone, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $safeService     = htmlspecialchars($serviceLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $safeCategory    = htmlspecialchars($categoryLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$safeDevice      = htmlspecialchars($deviceLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$safeBrand       = htmlspecialchars($brandLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$safePerformance = htmlspecialchars($performanceLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $safeArea        = htmlspecialchars($areaLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $safeBudget      = htmlspecialchars($budget, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $safeMessage     = nl2br(htmlspecialchars($message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'));
@@ -302,6 +513,33 @@ if ($safeBudget !== '') {
 HTML;
 }
 
+if ($safeDevice !== '') {
+    $userHtml .= <<<HTML
+            <tr>
+              <td style="padding:4px 0;color:#9ca3af;">Device</td>
+              <td style="padding:4px 0;">{$safeDevice}</td>
+            </tr>
+HTML;
+}
+
+if ($safeBrand !== '') {
+    $userHtml .= <<<HTML
+            <tr>
+              <td style="padding:4px 0;color:#9ca3af;">Brand</td>
+              <td style="padding:4px 0;">{$safeBrand}</td>
+            </tr>
+HTML;
+}
+
+if ($safePerformance !== '') {
+    $userHtml .= <<<HTML
+            <tr>
+              <td style="padding:4px 0;color:#9ca3af;">Performance</td>
+              <td style="padding:4px 0;">{$safePerformance}</td>
+            </tr>
+HTML;
+}
+
 $userHtml .= <<<HTML
             <tr>
               <td style="padding:8px 0 0 0;vertical-align:top;color:#9ca3af;">Message</td>
@@ -312,6 +550,21 @@ $userHtml .= <<<HTML
         <p style="margin:16px 0 0 0;font-size:12px;line-height:1.6;color:#6b7280;">
           If you didn&apos;t submit this request, you can safely ignore this email.
         </p>
+        <p style="margin:8px 0 0 0;font-size:11px;line-height:1.6;color:#6b7280;">
+          This email is a valid receipt for request confirmation and future reference, including agreement to our Terms of Service, Privacy Policy, Shipping Policy, and Repair / Service Terms. This email is not proof of payment.
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:7px 14px;background:#1a2234;border-top:1px solid #273449;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="font-size:10px;line-height:1;color:#b7c3d6;">
+          <tr>
+            <td style="white-space:nowrap;vertical-align:middle;">2026 NONTRONICS LLC.</td>
+            <td style="text-align:right;vertical-align:middle;">
+              <img src="{$noticeLogoUrl}" alt="Nontronics" style="display:inline-block;height:12px;max-width:90px;vertical-align:middle;" />
+            </td>
+          </tr>
+        </table>
       </td>
     </tr>
   </table>
@@ -325,9 +578,14 @@ $userText = "{$businessName} - Request Received\n\n"
     . "Phone: {$phone}\n"
     . "Service: {$serviceLabel}\n"
     . "Category: {$categoryLabel}\n"
+    . ($deviceLabel ? "Device: {$deviceLabel}\n" : '')
+    . ($brandLabel ? "Brand: {$brandLabel}\n" : '')
+    . ($performanceLabel ? "Performance: {$performanceLabel}\n" : '')
     . ($areaLabel ? "Area: {$areaLabel}\n" : '')
     . ($budget ? "Budget: {$budget}\n" : '')
-    . "\nMessage:\n{$message}\n";
+    . "\nMessage:\n{$message}\n"
+    . "\n2026 NONTRONICS LLC.\n"
+    . "\nThis email is a valid receipt for request confirmation and future reference, including agreement to the Terms of Service, Privacy Policy, Shipping Policy, and Repair / Service Terms. This email is not proof of payment.\n";
 
 // Admin email
 $adminHtml = <<<HTML
@@ -384,6 +642,18 @@ if ($safeBudget !== '') {
     $adminHtml .= "<strong>Budget:</strong> {$safeBudget}<br/>";
 }
 
+if ($safeDevice !== '') {
+  $adminHtml .= "<strong>Device:</strong> {$safeDevice}<br/>";
+}
+
+if ($safeBrand !== '') {
+  $adminHtml .= "<strong>Brand:</strong> {$safeBrand}<br/>";
+}
+
+if ($safePerformance !== '') {
+  $adminHtml .= "<strong>Performance:</strong> {$safePerformance}<br/>";
+}
+
 $adminHtml .= <<<HTML
             </p>
           </div>
@@ -438,7 +708,22 @@ $adminHtml .= <<<HTML
               <td style="padding:3px 0;vertical-align:top;">{$service}</td>
             </tr>
           </table>
+          <p style="margin:8px 0 0 0;font-size:11px;line-height:1.6;color:#6b7280;">
+            This email is a valid receipt for request confirmation and future reference, including agreement to our Terms of Service, Privacy Policy, Shipping Policy, and Repair / Service Terms. This email is not proof of payment.
+          </p>
         </div>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:7px 14px;background:#1a2234;border-top:1px solid #273449;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="font-size:10px;line-height:1;color:#b7c3d6;">
+          <tr>
+            <td style="white-space:nowrap;vertical-align:middle;">2026 NONTRONICS LLC.</td>
+            <td style="text-align:right;vertical-align:middle;">
+              <img src="{$noticeLogoUrl}" alt="Nontronics" style="display:inline-block;height:12px;max-width:90px;vertical-align:middle;" />
+            </td>
+          </tr>
+        </table>
       </td>
     </tr>
   </table>
@@ -457,8 +742,13 @@ $adminText = "New {$businessName} contact/quote request\n\n"
     . "Area: {$areaLabel}\n"
     . "Service: {$serviceLabel}\n"
     . "Category: {$categoryLabel}\n"
+    . ($deviceLabel ? "Device: {$deviceLabel}\n" : '')
+    . ($brandLabel ? "Brand: {$brandLabel}\n" : '')
+    . ($performanceLabel ? "Performance: {$performanceLabel}\n" : '')
     . ($budget ? "Budget: {$budget}\n" : '')
-    . "\nMessage:\n{$message}\n";
+    . "\nMessage:\n{$message}\n"
+    . "\n2026 NONTRONICS LLC.\n"
+    . "\nThis email is a valid receipt for request confirmation and future reference, including agreement to the Terms of Service, Privacy Policy, Shipping Policy, and Repair / Service Terms. This email is not proof of payment.\n";
 
 // -------------------------------------------------------------------------
 // Send messages
@@ -516,7 +806,7 @@ try {
     
     echo json_encode([
         'success' => false,
-        'message' => 'Mail error: ' . $e->getMessage(),
+      'message' => 'Unable to send email at this time.',
     ]);
 }
 

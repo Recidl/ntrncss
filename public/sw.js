@@ -1,9 +1,9 @@
 // Service Worker for Nontronics PWA
 const CACHE_NAME = 'nontronics-v2';
 const urlsToCache = [
-  './',
-  './index.html',
-  './manifest.json'
+  '/',
+  '/index.html',
+  '/manifest.json'
 ];
 
 // Install event - cache resources
@@ -41,13 +41,22 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  const requestUrl = new URL(event.request.url);
+  const isSameOrigin = requestUrl.origin === self.location.origin;
+  const isSensitiveEndpoint = requestUrl.pathname.startsWith('/contact.php');
+
+  // Never cache cross-origin requests or sensitive endpoints.
+  if (!isSameOrigin || isSensitiveEndpoint) {
+    return;
+  }
+
   // For HTML pages, try network first, fallback to cache
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
         .then(response => {
           // Cache successful responses
-          if (response.ok) {
+          if (response.ok && response.type === 'basic') {
             const responseClone = response.clone();
             caches.open(CACHE_NAME).then(cache => {
               cache.put(event.request, responseClone);
@@ -58,7 +67,7 @@ self.addEventListener('fetch', event => {
         .catch(() => {
           return caches.match(event.request)
             .then(cachedResponse => {
-              return cachedResponse || caches.match('./index.html');
+              return cachedResponse || caches.match('/');
             });
         })
     );
@@ -75,7 +84,7 @@ self.addEventListener('fetch', event => {
         return fetch(event.request)
           .then(response => {
             // Cache successful responses
-            if (response.ok) {
+            if (response.ok && response.type === 'basic') {
               const responseClone = response.clone();
               caches.open(CACHE_NAME).then(cache => {
                 cache.put(event.request, responseClone);

@@ -27,6 +27,37 @@ This is a static website that has been converted from Base44 to work independent
 
 The app will be available at `http://localhost:5173`
 
+## Environment Variables
+
+This project uses environment variables for sensitive backend values.
+
+1. Copy `.env.example` to `.env`
+2. Fill in real values for SMTP and admin email settings
+3. Never commit real secrets
+
+### Frontend vs Backend env vars
+
+- `VITE_*` variables are public at build-time and end up in browser JavaScript.
+- Secrets (API keys, SMTP passwords, private tokens) must stay server-side only.
+
+### Backend variables used by `public/contact.php`
+
+- `APP_ALLOWED_HOSTS`
+- `CONTACT_ADMIN_EMAIL`
+- `CONTACT_ADMIN_CC`
+- `SMTP_HOST`
+- `SMTP_PORT`
+- `SMTP_ENCRYPTION` (`tls` or `ssl`)
+- `SMTP_USERNAME`
+- `SMTP_PASSWORD`
+- `SMTP_FROM_EMAIL`
+- `SMTP_FROM_NAME`
+- `BUSINESS_NAME`
+- `BUSINESS_BRAND`
+- `LOGO_URL`
+
+For production, configure these in your hosting provider's environment settings and do not rely on a committed `.env` file.
+
 ## Building for Production
 
 To build the static site:

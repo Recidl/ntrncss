@@ -47,12 +47,17 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import Home from './pages/Home';
-import Repairs from './pages/Repairs';
-import Modifications from './pages/Modifications';
-import CustomBuilds from './pages/CustomBuilds';
-import Contact from './pages/Contact';
-import Resources from './pages/Resources';
+import { lazy } from 'react';
+const Home = lazy(() => import('./pages/Home'));
+const Repairs = lazy(() => import('./pages/Repairs'));
+const Modifications = lazy(() => import('./pages/Modifications'));
+const CustomBuilds = lazy(() => import('./pages/CustomBuilds'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Resources = lazy(() => import('./pages/Resources'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService'));
+const DataPolicy = lazy(() => import('./pages/DataPolicy'));
+const RepairServiceTerms = lazy(() => import('./pages/RepairServiceTerms'));
+const ShippingPolicy = lazy(() => import('./pages/ShippingPolicy'));
 import __Layout from './Layout.jsx';
 
 export const PAGES = {
@@ -62,6 +67,10 @@ export const PAGES = {
     "CustomBuilds": CustomBuilds,
     "Contact": Contact,
     "Resources": Resources,
+    "TermsOfService": TermsOfService,
+    "PrivacyPolicy": DataPolicy,
+    "RepairServiceTerms": RepairServiceTerms,
+    "ShippingPolicy": ShippingPolicy,
 }
 
 export const pagesConfig = {

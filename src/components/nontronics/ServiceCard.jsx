@@ -11,14 +11,14 @@ export default function ServiceCard({ title, description, image, tags, link, ind
       viewport={{ once: true, margin: "-30px" }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
-      <Link to={createPageUrl(link)} className="group block relative overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300">
+      <Link to={createPageUrl(link)} className="group block relative overflow-hidden border border-white/10 shadow-[0_8px_22px_-18px_rgba(0,0,0,0.7)] hover:shadow-[0_16px_34px_-20px_rgba(0,0,0,0.8)] transition-shadow duration-300">
         {/* Background image */}
         <div className="relative h-72 md:h-80 overflow-hidden">
           <img
             src={image}
             alt={title}
             loading="lazy"
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
           {/* Always dark gradient overlay - not affected by theme */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
@@ -32,7 +32,7 @@ export default function ServiceCard({ title, description, image, tags, link, ind
           <div className="flex items-end justify-between">
             <div>
               {/* Always white text for service cards */}
-              <h3 className="font-display text-2xl md:text-3xl tracking-wide text-white mb-2">
+              <h3 className="font-display text-2xl md:text-3xl tracking-[0.02em] text-white mb-2">
                 {title}
               </h3>
               {/* Always light gray text */}

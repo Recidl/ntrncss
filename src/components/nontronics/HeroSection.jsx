@@ -4,10 +4,12 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useTheme } from "./ThemeContext";
-import logoSrc from "../../../assets/nontronicsbwplog.png";
 
 const YT_VIDEO_ID = "jenQ3jQFhww";
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&q=85";
+const YT_IFRAME_API_URL = "https://www.youtube.com/iframe_api";
+// Optional: set to a pinned hash only for version-pinned external scripts.
+const YT_IFRAME_API_SRI = "";
 
 export default function HeroSection() {
   const { dark } = useTheme();
@@ -23,9 +25,14 @@ export default function HeroSection() {
       return;
     }
 
-    if (!window.YT) {
+    if (!window.YT && !document.querySelector(`script[src=\"${YT_IFRAME_API_URL}\"]`)) {
       const tag = document.createElement("script");
-      tag.src = "https://www.youtube.com/iframe_api";
+      tag.src = YT_IFRAME_API_URL;
+      tag.referrerPolicy = "strict-origin-when-cross-origin";
+      if (YT_IFRAME_API_SRI) {
+        tag.crossOrigin = "anonymous";
+        tag.integrity = YT_IFRAME_API_SRI;
+      }
       const firstScript = document.getElementsByTagName("script")[0];
       firstScript.parentNode.insertBefore(tag, firstScript);
     }
@@ -121,7 +128,7 @@ export default function HeroSection() {
           style={{
             background: dark
               ? "linear-gradient(to top, rgba(10,10,18,0.97) 0%, rgba(10,10,18,0.65) 45%, rgba(10,10,18,0.20) 100%)"
-              : "linear-gradient(to top, rgba(238,238,244,0.97) 0%, rgba(238,238,244,0.60) 45%, rgba(238,238,244,0.15) 100%)",
+              : "linear-gradient(to top, rgba(244,248,252,0.97) 0%, rgba(244,248,252,0.64) 45%, rgba(244,248,252,0.18) 100%)",
           }}
         />
         <div className="absolute inset-0 grid-overlay" />
@@ -152,7 +159,7 @@ export default function HeroSection() {
           className="mb-4"
         >
           <img
-            src={logoSrc}
+            src="/assets/nontronicsbwplog.png"
             alt="Nontronics"
             className="h-14 md:h-20 w-auto logo-img"
           />
@@ -162,7 +169,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.5 }}
-          className="font-display text-5xl sm:text-7xl md:text-9xl lg:text-[9rem] leading-[0.9] tracking-tight text-foreground"
+          className="font-display text-5xl sm:text-7xl md:text-9xl lg:text-[9rem] leading-[0.9] tracking-tight text-black dark:text-foreground"
         >
           PRECISION<br />
           <span className="text-primary">ELECTRONICS</span>

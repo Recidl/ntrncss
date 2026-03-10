@@ -2,8 +2,8 @@
   "name": "Nontronics - Precision Electronics Repair & Custom Builds",
   "short_name": "Nontronics",
   "description": "Precision electronics repair, custom modifications, and bespoke PC builds. Screen repair, controller mods, LED installations, and custom gaming PCs in Aurora, Illinois.",
-  "start_url": ".",
-  "scope": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#eeeef4",
@@ -11,13 +11,13 @@
   "categories": ["shopping", "business"],
   "screenshots": [
     {
-      "src": "nontronicslog.png",
+      "src": "/assets/nontronicslog.png",
       "sizes": "192x192",
       "type": "image/png",
       "form_factor": "narrow"
     },
     {
-      "src": "nontronicslog.png",
+      "src": "/assets/nontronicslog.png",
       "sizes": "512x512",
       "type": "image/png",
       "form_factor": "wide"
@@ -25,19 +25,19 @@
   ],
   "icons": [
     {
-      "src": "nontronicsfavi.png",
+      "src": "/assets/nontronicsfavi.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "nontronicsfavi.png",
+      "src": "/assets/nontronicsfavi.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "nontronicsfavi.png",
+      "src": "/assets/nontronicsfavi.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
@@ -48,10 +48,10 @@
       "name": "Contact Us",
       "short_name": "Contact",
       "description": "Get in touch with Nontronics for a quote",
-      "url": "Contact",
+      "url": "/Contact",
       "icons": [
         {
-          "src": "nontronicsfavi.png",
+          "src": "/assets/nontronicsfavi.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -61,10 +61,10 @@
       "name": "Services",
       "short_name": "Services",
       "description": "See all Nontronics services",
-      "url": ".",
+      "url": "/",
       "icons": [
         {
-          "src": "nontronicsfavi.png",
+          "src": "/assets/nontronicsfavi.png",
           "sizes": "192x192",
           "type": "image/png"
         }

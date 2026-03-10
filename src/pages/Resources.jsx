@@ -42,6 +42,7 @@ export default function Resources() {
             loading="eager"
           />
           <div className="absolute inset-0" style={{ background: "var(--bg-overlay)" }} />
+          <div className="absolute inset-0 grid-overlay" />
         </div>
         <div className="absolute top-1/2 right-1/4 w-72 h-72 bg-primary/10 blur-[120px]" />
 
@@ -59,7 +60,7 @@ export default function Resources() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="font-display text-5xl sm:text-7xl md:text-8xl tracking-tight text-foreground"
+            className="font-display text-5xl sm:text-7xl md:text-8xl tracking-tight text-black dark:text-foreground"
           >
             SHIPPING & <span className="text-primary">HANDLING</span>
           </motion.h1>
@@ -297,7 +298,7 @@ export default function Resources() {
           <SectionHeader
             number="02"
             title="SHIPPING PROVIDERS"
-            subtitle="Shipped directly from Aurora, IL. All products and repairs are boxed and shipped with care. In most cases, shipping costs are covered."
+            subtitle="Shipped directly from Aurora, IL. Service is primarily U.S. domestic; international requests and shipping are almost never accepted unless explicitly approved in writing."
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
             <GlassCard className="p-8 md:p-12 flex flex-col items-start gap-4">
@@ -317,6 +318,9 @@ export default function Resources() {
             <p className="text-muted-foreground text-sm font-light">
               A tracking code or link will be provided so you can follow your order every step of the way.
             </p>
+            <p className="text-muted-foreground text-xs font-light mt-2">
+              Nontronics is U.S.-based and generally only ships within the United States.
+            </p>
             <Package className="w-10 h-10 text-primary/60 mx-auto mt-4" />
           </div>
         </div>
@@ -334,7 +338,7 @@ export default function Resources() {
           <div className="absolute bottom-0 left-0 w-56 h-56 bg-primary/5 blur-[80px]" />
           <div className="relative">
             <Mail className="w-12 h-12 text-primary mx-auto mb-6" />
-            <h2 className="font-display text-3xl md:text-4xl tracking-wide text-foreground mb-4">
+            <h2 className="font-display text-3xl md:text-4xl tracking-wide text-black dark:text-foreground mb-4">
               HAVE <span className="text-primary">QUESTIONS</span>?
             </h2>
             <p className="text-muted-foreground text-sm md:text-base font-light mb-10 max-w-md mx-auto">

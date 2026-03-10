@@ -7,8 +7,11 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import OfflineIndicator from '@/components/OfflineIndicator';
+import SiteNotificationDropdown from '@/components/SiteNotificationDropdown';
+import GlobalLoadingIndicator from '@/components/GlobalLoadingIndicator';
 import { ThemeProvider } from '@/components/nontronics/ThemeContext';
-import { useEffect } from 'react';
+import { secureFetch } from '@/lib/http';
+import { Suspense, useEffect } from 'react';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -20,15 +23,7 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
-
-  // Show loading spinner while checking app public settings or auth
-  if (isLoadingPublicSettings || isLoadingAuth) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-        <div className="w-8 h-8 border-4 border-muted border-t-primary animate-spin"></div>
-      </div>
-    );
-  }
+  const isAppLoading = isLoadingPublicSettings || isLoadingAuth;
 
   // Handle authentication errors
   if (authError) {
@@ -43,44 +38,59 @@ const AuthenticatedApp = () => {
 
   // Render the main app
   return (
-    <Routes>
-      <Route path="/" element={
-        <LayoutWrapper currentPageName={mainPageKey}>
-          <MainPage />
-        </LayoutWrapper>
-      } />
-      {Object.entries(Pages).map(([path, Page]) => (
-        <Route
-          key={path}
-          path={`/${path}`}
-          element={
-            <LayoutWrapper currentPageName={path}>
-              <Page />
+    <>
+      <GlobalLoadingIndicator active={isAppLoading} />
+      <Suspense fallback={<GlobalLoadingIndicator active />}>
+        <Routes>
+          <Route path="/" element={
+            <LayoutWrapper currentPageName={mainPageKey}>
+              <MainPage />
             </LayoutWrapper>
-          }
-        />
-      ))}
-      <Route path="*" element={
-        <LayoutWrapper currentPageName="404">
-          <PageNotFound />
-        </LayoutWrapper>
-      } />
-    </Routes>
+          } />
+          {Object.entries(Pages).map(([path, Page]) => (
+            <Route
+              key={path}
+              path={`/${path}`}
+              element={
+                <LayoutWrapper currentPageName={path}>
+                  <Page />
+                </LayoutWrapper>
+              }
+            />
+          ))}
+          <Route path="*" element={
+            <LayoutWrapper currentPageName="404">
+              <PageNotFound />
+            </LayoutWrapper>
+          } />
+        </Routes>
+      </Suspense>
+    </>
   );
 };
 
 function App() {
-  const baseUrl = import.meta.env.BASE_URL || '/';
-  const routerBase = baseUrl === '/' ? '/' : baseUrl.replace(/\/$/, '');
 
-  // Register service worker for PWA support
+  // Register service worker only in production. In dev, remove stale workers/caches.
   useEffect(() => {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register(`${baseUrl}sw.js`).catch(err => {
-        console.log('Service Worker registration failed:', err);
-      });
+      if (import.meta.env.PROD) {
+        navigator.serviceWorker.register('/sw.js').catch(err => {
+          console.log('Service Worker registration failed:', err);
+        });
+      } else {
+        navigator.serviceWorker.getRegistrations()
+          .then((registrations) => Promise.all(registrations.map((r) => r.unregister())))
+          .catch(() => null);
+
+        if ('caches' in window) {
+          caches.keys()
+            .then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
+            .catch(() => null);
+        }
+      }
     }
-  }, [baseUrl]);
+  }, []);
 
   // Quietly refresh app assets after reconnecting without forcing a page reload.
   useEffect(() => {
@@ -116,7 +126,13 @@ function App() {
 
         await Promise.all(
           Array.from(assetUrls).map((url) =>
-            fetch(url, { method: 'GET', cache: 'no-store' }).catch(() => null)
+            secureFetch(url, {
+              method: 'GET',
+              cache: 'no-store',
+              parseJson: false,
+              timeoutMs: 5000,
+              retries: 0,
+            }).catch(() => null)
           )
         );
 
@@ -166,7 +182,8 @@ function App() {
       <AuthProvider>
         <QueryClientProvider client={queryClientInstance}>
           <OfflineIndicator />
-          <Router basename={routerBase}>
+          <SiteNotificationDropdown />
+          <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <AuthenticatedApp />
           </Router>
           <Toaster />
