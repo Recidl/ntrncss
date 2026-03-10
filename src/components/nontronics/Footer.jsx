@@ -16,7 +16,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-2">
             <img
-              src="/assets/nontronicslog.png"
+                src={`${import.meta.env.BASE_URL}assets/nontronicslog.png`}
               alt="Nontronics"
               className="h-8 w-auto mb-5 logo-img"
             />

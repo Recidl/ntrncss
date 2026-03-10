@@ -68,7 +68,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link to={createPageUrl("Home")} className="z-10 flex items-center">
             <img
-              src="/assets/nontronicslog.png"
+              src={`${import.meta.env.BASE_URL}assets/nontronicslog.png`}
               alt="Nontronics"
               className="h-8 w-auto logo-img"
             />
@@ -240,7 +240,7 @@ export default function Navbar() {
                     2026 NONTRONICS LLC.
                   </span>
                   <img
-                    src="/assets/nontronicslog.png"
+                    src={`${import.meta.env.BASE_URL}assets/nontronicslog.png`}
                     alt="Nontronics"
                     className="logo-img h-5 w-auto opacity-85"
                   />

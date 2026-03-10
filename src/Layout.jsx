@@ -49,7 +49,7 @@ export default function Layout({ children }) {
           <div className="absolute inset-0 bg-[radial-gradient(1200px_circle_at_50%_45%,hsl(var(--primary)/0.09),transparent_60%)]" />
           <div className="absolute inset-0 flex items-center justify-center">
             <img
-              src="/assets/nontronicsbwplog.png"
+                src={`${import.meta.env.BASE_URL}assets/nontronicsbwplog.png`}
               alt=""
               className="logo-img w-[220px] md:w-[300px] opacity-30 mix-blend-soft-light"
               loading="eager"

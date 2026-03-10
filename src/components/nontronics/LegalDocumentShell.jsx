@@ -85,7 +85,7 @@ export default function LegalDocumentShell({
         <article className="relative border border-border bg-background shadow-sm overflow-hidden">
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <img
-              src="/assets/nontronicsbwplog.png"
+              src={`${import.meta.env.BASE_URL}assets/nontronicsbwplog.png`}
               alt=""
               aria-hidden="true"
               className="logo-img w-[72%] max-w-3xl opacity-[0.05] dark:opacity-[0.07]"

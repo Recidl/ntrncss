@@ -75,7 +75,7 @@ function App() {
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       if (import.meta.env.PROD) {
-        navigator.serviceWorker.register('/sw.js').catch(err => {
+        navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`).catch(err => {
           console.log('Service Worker registration failed:', err);
         });
       } else {

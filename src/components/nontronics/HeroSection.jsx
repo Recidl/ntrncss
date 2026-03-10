@@ -159,7 +159,7 @@ export default function HeroSection() {
           className="mb-4"
         >
           <img
-            src="/assets/nontronicsbwplog.png"
+              src={`${import.meta.env.BASE_URL}assets/nontronicsbwplog.png`}
             alt="Nontronics"
             className="h-14 md:h-20 w-auto logo-img"
           />
